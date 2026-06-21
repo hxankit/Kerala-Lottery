@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sthree Sakthi - React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sthree Sakthi Kerala Lottery Result | Live Results</title>
+  <meta name="description" content="Sthree Sakthi Kerala Lottery Result - Kerala State Lotteries, Government of Kerala. Search winners by phone number and view live lottery results." />
+  <link rel="icon" href="/images/logo.png" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="home">
+  <main>
+    <!-- Banner -->
+    <section class="banner">
+      <img src="/images/banner.png" alt="Kerala Lottery - Government of Kerala. Reliable, Transparent, Popular. 25 Crores." />
+    </section>
+
+    <!-- Search by phone -->
+    <section class="search-section">
+      <div class="search-card">
+        <h2>Check Your Result</h2>
+        <p>Enter your registered phone number to find out if you are a winner.</p>
+        <form class="search-form" id="searchForm" autocomplete="off">
+          <input type="tel" id="searchPhone" class="search-input" inputmode="numeric"
+                 placeholder="Enter 10-digit phone number" required />
+          <button type="submit" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Search
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Carousel -->
+    <section class="carousel-section" aria-label="Lottery image gallery">
+      <h2 class="section-title">Kerala State Lotteries Gallery</h2>
+      <div class="carousel" id="carousel">
+        <div class="slides" id="slides">
+          <div class="slide"><img src="/images/slide1.png" alt="Kerala State Lotteries live draw event" /></div>
+          <div class="slide"><img src="/images/slide2.png" alt="Kerala lottery tickets" /></div>
+          <div class="slide"><img src="/images/slide3.png" alt="Kerala lottery winner ceremony" /></div>
+        </div>
+        <button class="car-btn prev" id="prevBtn" aria-label="Previous slide">&#10094;</button>
+        <button class="car-btn next" id="nextBtn" aria-label="Next slide">&#10095;</button>
+        <div class="dots" id="dots" role="tablist" aria-label="Slide navigation"></div>
+      </div>
+    </section>
+
+    <!-- Note -->
+    <section class="note-section">
+      <p class="note">
+        <span class="note-label">note :-</span>
+        Kerala State Lotteries is a lottery programme run by the Government of Kerala.
+        Established in 1967, under the lottery department of the Government of Kerala,
+        it is the first of its kind in India.
+      </p>
+      <p class="live-result">Kerala Lottery Live Result Is Available Now.</p>
+    </section>
+
+    <!-- Result card -->
+    <section class="result-section">
+      <div class="result-card">
+        <h2>Sthree Sakthi Lottery Result</h2>
+        <p class="draw-meta">Draw held every Tuesday at 3:00 PM</p>
+        <div class="prize-row first-prize">
+          <span class="prize-name">1st Prize &#8377; 1,00,00,000/-</span>
+          <span class="prize-num">SS&nbsp;123456</span>
+        </div>
+        <div class="prize-row">
+          <span class="prize-name">Consolation Prize &#8377; 8,000/-</span>
+          <span class="prize-num">SN SO SP SR SS ST SU SV SW SX</span>
+        </div>
+        <div class="prize-row">
+          <span class="prize-name">2nd Prize &#8377; 10,00,000/-</span>
+          <span class="prize-num">SS&nbsp;456789</span>
+        </div>
+        <div class="prize-row">
+          <span class="prize-name">3rd Prize &#8377; 5,000/-</span>
+          <span class="prize-num">0123 0456 0789 1234 1567 1890</span>
+        </div>
+        <p class="result-disclaimer">Results are for reference only. Always verify with the official Kerala State Lotteries gazette.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Result not found modal -->
+  <div class="modal-overlay" id="notFoundModal" role="dialog" aria-modal="true" aria-labelledby="nfTitle">
+    <div class="modal">
+      <div class="modal-icon no">&times;</div>
+      <h3 id="nfTitle">Result Not Found</h3>
+      <p>No winner is registered with this phone number. Please check the number and try again.</p>
+      <button type="button" class="btn-primary btn-orange" id="nfClose">Try Again</button>
+    </div>
+  </div>
+
+  <script src="/common.js"></script>
+  <script src="/script.js"></script>
+  <script src="/search.js"></script>
+</body>
+</html>
