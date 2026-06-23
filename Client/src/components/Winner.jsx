@@ -189,7 +189,7 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                1st Prize ₹12,00,000
+                1st Prize ₹25,00,00,000
               </h2>
             </div>
 
@@ -208,12 +208,12 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                2nd Prize ₹12,00,000
+                2nd Prize ₹10,00,00,000
               </h2>
             </div>
 
             <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
-              {['KL 0102445', 'KL 0255584', 'KL 1235458', 'KL 1546650'].map((code) => (
+              {['KL 0102445'].map((code) => (
                 <div
                   key={code}
                   className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
@@ -228,12 +228,12 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                3th Prize ₹12,00,000
+                3th Prize ₹75,00,000
               </h2>
             </div>
 
             <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
-              {['KL 878788', 'KL 657832', 'KL 895848', 'KL 078649', 'KL 000401', 'KL 145247'].map((code) => (
+              {['KL 878788'].map((code) => (
                 <div
                   key={code}
                   className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
@@ -248,7 +248,7 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                4th Prize ₹12,00,000
+                4th Prize ₹25,00,000
               </h2>
             </div>
 
@@ -286,7 +286,7 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                6th Prize ₹12,00,000
+                6th Prize ₹5,00,000
               </h2>
             </div>
 
@@ -304,7 +304,7 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                7th Prize ₹12,00,000
+                7th Prize ₹75,000
               </h2>
             </div>
 
@@ -322,7 +322,7 @@ export function Winner() {
           <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
             <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
               <h2 className="text-4xl font-extrabold text-white">
-                8th Prize ₹12,00,000
+                8th Prize ₹25,000
               </h2>
             </div>
 

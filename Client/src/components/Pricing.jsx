@@ -81,7 +81,7 @@ export function Pricing() {
                   <div key={item.label} className="rounded-[1.75rem] border border-slate-200  p-5 shadow-inner text-white">
                     <p className="text-xs uppercase tracking-[0.25em] text-slate-400">{item.label}</p>
                     <p className="mt-3 text-2xl font-bold">{item.value}</p>
-                    <p className="mt-1 text-sm text-slate-300">{item.winners}</p>
+                    <p className="mt-1 text-sm text-white">{item.winners}</p>
                   </div>
                 ))}
               </div>
