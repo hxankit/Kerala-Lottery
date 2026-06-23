@@ -164,7 +164,7 @@ export function Winner() {
         </p>
 
         <p className="mt-3 text-4xl text-center text-black font-extrabold bg-gradient-to-b from-[#fed7aa] to-[#fde68a]">
-          ₹ 12,00,000/-
+          ₹ 25,00,00,000/-
         </p>
 
         <p className="mt-2 text-xs mb-6 text-center uppercase tracking-[0.24em] text-black">
