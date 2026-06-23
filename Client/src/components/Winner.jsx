@@ -9,7 +9,7 @@ export function Winner() {
 
   const [winner, setWinner] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const [OtherWinners,setOtherWinners]=useState([])
+  const [OtherWinners, setOtherWinners] = useState([])
 
 
   useEffect(() => {
@@ -92,17 +92,74 @@ export function Winner() {
     {
       label: '6th Prize',
       amount: '₹5 Lakh',
-      codes: ['KL 000455', 'KL 909990', 'KL 098999', 'KL 111333', 'KL 876787', 'KL 809998', 'KL 787789', 'KL 099990'],
+      codes: [
+        'KL 384721',
+        'KL 908154',
+        'KL 172639',
+        'KL 651802',
+        'KL 497315',
+        'KL 820946',
+        'KL 135784',
+        'KL 769251',
+        'KL 284690',
+        'KL 913578',
+        'KL 640127',
+        'KL 758394',
+        'KL 126845',
+        'KL 539718',
+        'KL 871263',
+        'KL 392056',
+        'KL 684175',
+        'KL 950432'
+      ]
     },
     {
       label: '7th Prize',
       amount: '₹7,500',
-      codes: ['KL 777777', 'KL 098345', 'KL 999000', 'KL 098887', 'KL 099909', 'KL 878666', 'KL 000999'],
+      codes: [
+        'KL 482916',
+        'KL 173548',
+        'KL 906234',
+        'KL 521897',
+        'KL 348761',
+        'KL 695142',
+        'KL 217983',
+        'KL 864305',
+        'KL 731256',
+        'KL 409872',
+        'KL 956138',
+        'KL 184629',
+        'KL 672451',
+        'KL 528364',
+        'KL 813907',
+        'KL 245786',
+        'KL 397124',
+        'KL 760519'
+      ]
     },
     {
       label: '8th Prize',
       amount: '₹2,500',
-      codes: ['KL 909988', 'KL 000090', 'KL 909099', 'KL 787777', 'KL 098989', 'KL 090989', 'KL 908878', 'KL 787790', 'KL 999888', 'KL 898990', 'KL 000989'],
+      codes: [
+        'KL 909988',
+        'KL 000090',
+        'KL 909099',
+        'KL 787777',
+        'KL 098989',
+        'KL 090989',
+        'KL 908878',
+        'KL 787790',
+        'KL 999888',
+        'KL 898990',
+        'KL 482731',
+        'KL 156904',
+        'KL 873625',
+        'KL 294518',
+        'KL 760183',
+        'KL 531846',
+        'KL 918274',
+        'KL 647395'
+      ]
     },
   ];
 
@@ -123,22 +180,22 @@ export function Winner() {
     ];
 
     return (
-<div className="mx-auto w-full max-w-6xl rounded-[32px] border border-yellow-200 bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-3 sm:p-4 shadow-2xl">
-          <div className="space-y-4">
-            {winners.map((winner) => (
-              <div
-                key={winner.title}
-                className="grid gap-3 rounded-3xl bg-white p-3 sm:p-4 shadow-lg sm:grid-cols-[1.8fr_1fr] sm:items-center"
-              >
-                <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-[#48ef1f] p-3 text-center shadow-lg sm:text-left">
-                  <h2 className="text-2xl sm:text-3xl font-black text-black">
-                    {winner.title}
-                  </h2>
-                  <Trophy size={24} className="fill-yellow-500 text-yellow-500" />
-                </div>
+      <div className="mx-auto w-full max-w-6xl rounded-[32px] border border-yellow-200 bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-3 sm:p-4 shadow-2xl">
+        <div className="space-y-4">
+          {winners.map((winner) => (
+            <div
+              key={winner.title}
+              className="grid gap-3 rounded-3xl bg-white p-3 sm:p-4 shadow-lg sm:grid-cols-[1.8fr_1fr] sm:items-center"
+            >
+              <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-[#48ef1f] p-3 text-center shadow-lg sm:text-left">
+                <h2 className="text-2xl sm:text-3xl font-black text-black">
+                  {winner.title}
+                </h2>
+                <Trophy size={24} className="fill-yellow-500 text-yellow-500" />
+              </div>
 
-                <div className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-gray-400 bg-[#f8f2df] p-2 shadow-lg">
-                  <span className="text-2xl sm:text-3xl font-black text-black">
+              <div className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-gray-400 bg-[#f8f2df] p-2 shadow-lg">
+                <span className="text-2xl sm:text-3xl font-black text-black">
                   {winner.number}
                 </span>
               </div>
@@ -149,7 +206,7 @@ export function Winner() {
         {/* Note */}
         <div className="mt-10 text-center">
           <div className="flex flex-col items-center justify-center gap-3">
-            
+
 
             <p className="text-2xl font-black text-black">
               ★ Note : Send Account Details For Transfer Winning Amount.
@@ -158,9 +215,9 @@ export function Winner() {
               STHREESAKTHI LOTTERY RESULT 2026 | GOVERNMENT OF KERALA
             </p>
             <p className="text-2xl font-black text-black">
-             ★ LOTTERIES RESULT BY KERALA GOVERNMENT ★
+              ★ LOTTERIES RESULT BY KERALA GOVERNMENT ★
             </p>
-            
+
           </div>
         </div>
       </div>
@@ -168,7 +225,7 @@ export function Winner() {
   }
 
   return (
-    <div className="min-h-screen border border-2 border-black bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen  bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-5xl rounded-[32px] border border-slate-200 bg-white p-3 shadow-xl sm:p-5 text-slate-900">
 
         <div className="flex justify-center mb-6">
@@ -204,7 +261,7 @@ export function Winner() {
         {/* <p className="mt-6 text-center text-xl sm:text-2xl text-black font-extrabold bg-gradient-to-b from-[#fed7aa] to-[#fde68a] py-4 rounded-3xl">
           ₹ 12,00,000/-
         </p> */}
-{/* 
+        {/* 
         <p className="mt-3 text-sm text-center uppercase tracking-[0.24em] text-slate-600">
           If prize above ₹5 Lakh, Govt. Tax Applicable.
         </p> */}
@@ -247,7 +304,10 @@ export function Winner() {
                     <p className="mt-1 text-sm text-white/80">{prize.amount}</p>
                   </div>
 
-                  <div className="mt-3 grid gap-2">
+                  <div
+                    className={`mt-3 grid gap-2 ${prize.codes.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                      }`}
+                  >
                     {prize.codes.map((code) => (
                       <div
                         key={code}

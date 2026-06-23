@@ -96,9 +96,6 @@ export function Pricing() {
                 <h4 className="text-lg font-bold">Mega Kerala Lottery</h4>
                 <p className="mt-2 text-sm text-slate-700">Grab your ticket before the draw closes and claim your chance at the bumper jackpot.</p>
               </div>
-              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ef4444] via-[#f97316] to-[#facc15] px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-slate-950 shadow-lg shadow-orange-300/30 transition hover:-translate-y-0.5">
-                Book Ticket&apos;s NOW!
-              </button>
             </div>
           </div>
         </div>

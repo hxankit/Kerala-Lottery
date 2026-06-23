@@ -12,11 +12,10 @@ const navItems = [
 ]
 
 const tickerMessages = [
-  'Sthree Sakthi SS Result OUT NOW - 1st Prize Rs 1,00,00,000',
-  'Win-Win W Result declared - check your ticket',
-  'Karunya Plus KN Bumper draw this Thursday',
-  'Akshaya AK weekly draw results available',
-  'Onam Bumper - First Prize Rs 25 CRORES',
+  '1 Ticket for 149/- Only',
+  '2 Ticket for 399/- Only',
+  '5 Ticket for 596/- Only',
+  "Consolation Priz@s for 665 lucky winners"
 ]
 
 export function Header() {
@@ -105,7 +104,9 @@ export function Header() {
         {isOpen && (
           <>
             <div className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30" onClick={() => setIsOpen(false)} />
-            <aside className="fixed left-0 top-0 h-full w-full max-w-xs bg-gradient-to-b from-[#f5d96b] to-[#ffe98a] shadow-2xl lg:hidden z-40 pt-16 border-r-4 border-orange overflow-y-auto">
+            <aside
+              className="fixed top-0 left-0 h-screen w-[80%] max-w-sm bg-gradient-to-b from-[#f5d96b] to-[#ffe98a] shadow-2xl lg:hidden z-50 pt-20 border-r-4 border-orange overflow-y-auto"
+            >
               <div className="p-4 space-y-2">
                 {navItems.map((item) => (
                   <Link
@@ -152,7 +153,7 @@ export function Footer() {
           <div>
             <h3 className="text-white font-bold text-sm uppercase tracking-wide mb-3">Quick Links</h3>
             <ul className="space-y-2 text-sm text-cream/70 flex flex-col">
-              <Link to={"/"}  className="hover:text-orange transition cursor-pointer">Home</Link>
+              <Link to={"/"} className="hover:text-orange transition cursor-pointer">Home</Link>
               <Link to={"/pricing"} className="hover:text-orange transition cursor-pointer">Pricing</Link>
               <Link to={"/help"} className="hover:text-orange transition cursor-pointer">Help Center</Link>
               <Link to={"/contact"} className="hover:text-orange transition cursor-pointer">Contact Us</Link>
