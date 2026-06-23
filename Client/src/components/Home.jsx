@@ -246,25 +246,29 @@ export function Home() {
                             <span className="absolute -left-6 -bottom-6 w-20 h-20 bg-white/5 rounded-full"></span>
                             <span className="flex items-center gap-2 relative z-10 text-sm sm:text-base">
                                 <Trophy className="w-5 h-5 text-yellow-300" />
-                                1st Prize ₹ 1,00,00,000/-
+                                1st Prize ₹ 25,00,00,000/-
                             </span>
-                            <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm tracking-wider relative z-10">SS 123456</span>
+                            {/* <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm tracking-wider relative z-10">SS 123456</span> */}
+                        </div>
+                        <div className="bg-gradient-to-r from-green-700 via-green-600 to-green-700 text-white p-4 sm:p-5 rounded-xl flex flex-wrap justify-between items-center gap-2 font-bold shadow-lg relative overflow-hidden border border-green-500/40">
+                            <span className="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full"></span>
+                            <span className="absolute -left-6 -bottom-6 w-20 h-20 bg-white/5 rounded-full"></span>
+                            <span className="flex items-center gap-2 relative z-10 text-sm sm:text-base">
+                                <Trophy className="w-5 h-5 text-yellow-300" />
+                                2nd Prize ₹ 10,00,00,000/-
+                            </span>
+                            {/* <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm tracking-wider relative z-10">SS 123456</span> */}
+                        </div>
+                        <div className="bg-gradient-to-r from-green-700 via-green-600 to-green-700 text-white p-4 sm:p-5 rounded-xl flex flex-wrap justify-between items-center gap-2 font-bold shadow-lg relative overflow-hidden border border-green-500/40">
+                            <span className="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full"></span>
+                            <span className="absolute -left-6 -bottom-6 w-20 h-20 bg-white/5 rounded-full"></span>
+                            <span className="flex items-center gap-2 relative z-10 text-sm sm:text-base">
+                                <Trophy className="w-5 h-5 text-yellow-300" />
+                                3rd Prize ₹ 75,00,000/-
+                            </span>
+                            {/* <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm tracking-wider relative z-10">SS 123456</span> */}
                         </div>
 
-                        <div className="bg-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-2 border border-gray-200 shadow-sm hover:shadow-md transition">
-                            <span className="font-semibold text-gray-800 text-sm sm:text-base">Consolation Prize ₹ 8,000/-</span>
-                            <span className="text-xs sm:text-sm text-gray-500 font-medium tracking-wide">SN SO SP SR SS ST SU SV SW SX</span>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-2 border border-gray-200 shadow-sm hover:shadow-md transition">
-                            <span className="font-semibold text-gray-800 text-sm sm:text-base">2nd Prize ₹ 10,00,000/-</span>
-                            <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold tracking-wider">SS 456789</span>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-2 border border-gray-200 shadow-sm hover:shadow-md transition">
-                            <span className="font-semibold text-gray-800 text-sm sm:text-base">3rd Prize ₹ 5,000/-</span>
-                            <span className="text-xs sm:text-sm text-gray-500 font-medium tracking-wide">0123 0456 0789 1234 1567 1890</span>
-                        </div>
                     </div>
 
                     <p className="text-xs text-gray-500 mt-6 border-t border-amber-200 pt-4 flex items-center gap-1.5">
