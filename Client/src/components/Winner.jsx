@@ -230,7 +230,7 @@ export function Winner() {
 
         <div className="flex justify-center mb-6">
           <img
-            src="/images/logoWinner.png"
+            src="/images/logoWinnerpage.png"
             alt="Winner Logo"
             className="mx-auto w-full max-w-md object-contain"
           />

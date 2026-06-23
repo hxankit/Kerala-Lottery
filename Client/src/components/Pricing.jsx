@@ -18,7 +18,7 @@ export function Pricing() {
     <div className="min-h-screen bg-gradient-to-b from-[#fff8e2] via-[#ffefc2] to-[#f3d284] text-slate-950">
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="rounded-[2.5rem] border border-red-500/10 bg-white shadow-[0_45px_100px_rgba(251,146,60,0.18)] overflow-hidden">
-          <div className="bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f] px-6 py-10 sm:px-10 sm:py-14 text-slate-950">
+          <div className="bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f] px-4 py-8 sm:px-10 sm:py-14 text-slate-950">
             <p className="text-xs uppercase tracking-[0.35em] text-slate-950/80">Mega Bumper DHAMAKA OFFER</p>
             <h1 className="mt-4 text-3xl sm:text-4xl font-extrabold uppercase tracking-[-0.04em]">Mega Kerala Lottery</h1>
             <p className="mt-3 text-base sm:text-lg text-slate-950/90 max-w-3xl leading-relaxed">
@@ -26,9 +26,9 @@ export function Pricing() {
             </p>
           </div>
 
-          <div className="px-6 py-8 sm:px-10 sm:py-10 space-y-10">
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.15fr_0.85fr] text-black">
-              <div className="rounded-[2rem] border border-red-500/10 bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f] p-6 sm:p-8 shadow-xl text-black">
+          <div className="px-2 py-2 sm:px-10 sm:py-10 space-y-10">
+            <div className="grid grid-cols-1 gap-2 xl:grid-cols-[1.15fr_0.85fr] text-black">
+              <div className="rounded-[2rem] border border-red-500/10 bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f] p-3 sm:p-4 shadow-xl text-black">
                 <div className="inline-flex items-center gap-2 rounded-full bg-red-500/10 px-4 py-2 text-xs text-black uppercase tracking-[0.3em] text-red-100 font-semibold mb-6">
                   Festival Dhamaka Offer Tickets
                 </div>
@@ -65,7 +65,7 @@ export function Pricing() {
               </div>
             </div>
 
-            <section className="rounded-[2rem] border border-red-500/10 bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f]  p-8 shadow-xl">
+            <section className="rounded-[2rem] border border-red-500/10 bg-gradient-to-r from-[#f3d053] via-[#f9b33b] to-[#ef6b2f]  p-4 shadow-xl">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm uppercase tracking-[0.28em] text-red-700">Prize Breakdown</p>

@@ -69,7 +69,7 @@ export function Header() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition">
             <img
-              src="/images/logo.png"
+              src="/images/logoWinner.png"
               alt="Kerala Lottery logo"
               className="w-12 h-12 rounded-full border-2 border-white shadow"
             />
