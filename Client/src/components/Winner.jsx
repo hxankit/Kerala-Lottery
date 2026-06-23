@@ -2,6 +2,7 @@
 import { useLocation, Link } from 'react-router-dom';
 import { lotteryUtils } from '@/lib/lotteryUtils';
 // import logowinner from '@/assets/logowinner.png'; // adjust path if needed
+import { Trophy, Star } from "lucide-react";
 
 export function Winner() {
   const location = useLocation();
@@ -57,68 +58,121 @@ export function Winner() {
     );
   }
 
+
+  function Winners() {
+    const winners = [
+      {
+        title: "1st Winner",
+        number: "KL050049",
+      },
+      {
+        title: "2nd Winner",
+        number: "KL025584",
+      },
+      {
+        title: "3rd Winner",
+        number: "KL468568",
+      },
+    ];
+
+    return (
+      <div className="mx-auto max-w-6xl rounded-[40px] border-2 border-yellow-200 bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-10 shadow-2xl">
+        <div className="space-y-8">
+          {winners.map((winner) => (
+            <div
+              key={winner.title}
+              className="flex items-center justify-between gap-10"
+            >
+              {/* Left Box */}
+              <div className="flex w-[80%]  items-center justify-center gap-5 rounded-xl bg-[#48ef1f] p-8 shadow-lg">
+                <h2 className="text-4xl font-black text-black">
+                  {winner.title}
+                </h2>
+
+                <Trophy
+                  size={30}
+                  className="fill-yellow-500 text-yellow-500"
+                />
+              </div>
+
+              {/* Right Box */}
+              <div className="flex  items-center justify-center rounded-xl border-4 border-gray-500 bg-[#f8f2df] p-5 shadow-lg">
+                <span className="text-5xl font-black text-black">
+                  {winner.number}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Note */}
+        <div className="mt-14 text-center">
+          <div className="flex flex-col items-center justify-center gap-3">
+            
+
+            <p className="text-2xl font-black text-black">
+              ★ Note : Send Account Details For Transfer Winning Amount.
+            </p>
+            <p className="text-2xl font-black text-black">
+              STHREESAKTHI LOTTERY RESULT 2026 | GOVERNMENT OF KERALA
+            </p>
+            <p className="text-2xl font-black text-black">
+             ★ LOTTERIES RESULT BY KERALA GOVERNMENT ★
+            </p>
+            
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen text-white">
-      <div className="absolute inset-0  pointer-events-none" />
+    <div className="  border-2 border-black w-[80%] mx-auto p-5">
+      <div className="min-h-screen pt-10 px-2 text-white">
 
-      {/* <div className=" px-4"> */}
-      {/* <div className="mb-8 rounded-[2rem] border border-white/10 bg-white/5 shadow-[0_40px_120px_rgba(0,0,0,0.35)] backdrop-blur-xl overflow-hidden"> */}
-
-      <div className="relative overflow-hidden">
-        <img
-          src="/images/1.png"
-          alt="Lottery banner"
-          className="w-full object-cover opacity-90"
-        />
-
-      
-        {/* Center logo */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex justify-center mb-8">
           <img
             src="/images/logoWinner.png"
             alt="Winner Logo"
-            className="w-[220px] h-[220px] object-contain -translate-y-30  opacity-90"
+            className="h-[420px] w-auto object-contain"
           />
         </div>
 
 
-      </div>
-      <div className="px-6 py-8 sm:px-10 sm:py-10">
         <div className="text-center">
 
 
-          <p className="mt-2 text-sm text-slate-200">Your lottery result is here. Check your winning ticket details below.</p>
+          <p className="text-5xl font-extrabold text-red-600 uppercase">Congratulations</p>
+          <p className="mt-2 text-sm text-black">Your lottery result is here. Check your winning ticket details below.</p>
+          <p className="text-2xl font-extrabold text-red-600 mb-4">You Are 5th Winner</p>
         </div>
 
-        <div className="mt-8 rounded-[2rem] border border-white/10  p-4 shadow-lg">
-          <div className="rounded-[1.75rem] bg-gradient-to-r from-[#f5d96b] via-[#ffe98a] to-[#f5d96b] p-5 text-center shadow-inner">
-            <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Name</p>
-            <p className="mt-2 text-2xl font-bold text-white">{winner.name}</p>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[1.75rem] bg-slate-900/80 p-4 text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Mobile</p>
-              <p className="mt-2 text-lg font-semibold text-white">{winner.phone}</p>
-            </div>
-            <div className="rounded-[1.75rem] bg-slate-900/80 p-4 text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Ticket</p>
-              <p className="mt-2 text-lg font-semibold text-white">{winner.ticketNumber || 'N/A'}</p>
-            </div>
-            <div className="rounded-[1.75rem] bg-slate-900/80 p-4 text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Position</p>
-              <p className="mt-2 text-lg font-semibold text-white">{winner.position || '5Th'}</p>
-            </div>
-          </div>
-        </div>
+        {/* <div className="mt-8 rounded-3xl  shadow-lg text-center"> */}
+        <p className="text-4xl font-extrabold text-red-600 uppercase text-center">
+          {winner?.name}
+        </p>
 
-        <div className="mt-8 rounded-[2rem] bg-gradient-to-r from-fuchsia-500 via-pink-500 to-orange-500 p-6 text-center shadow-xl">
-          <p className="text-sm uppercase tracking-[0.28em] text-white/90">Your Winning</p>
-          <p className="mt-3 text-4xl font-black text-white">₹ 12,00,000/-</p>
-          <p className="mt-2 text-xs uppercase tracking-[0.24em] text-white/80">If prize above ₹5 Lakh, Govt. Tax Applicable.</p>
-        </div>
+        <p className="mt-2 text-3xl font-bold text-red-600 text-center">
+          {winner?.phone}
+        </p>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-violet-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95">
+        <p className="mt-2 text-4xl font-extrabold tracking-[0.3em] text-red-600 uppercase text-center">
+          {winner?.ticketNumber || "N/A"}
+        </p>
+        <p className="text-sm text-center mt-3 uppercase tracking-[0.28em] text-black">
+          Your Winning
+        </p>
+
+        <p className="mt-3 text-4xl text-center text-black font-extrabold bg-gradient-to-b from-[#fed7aa] to-[#fde68a]">
+          ₹ 12,00,000/-
+        </p>
+
+        <p className="mt-2 text-xs mb-6 text-center uppercase tracking-[0.24em] text-black">
+          If prize above ₹5 Lakh, Govt. Tax Applicable.
+        </p>
+
+        {/* <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <button className="inline-flex items-center justify-center rounded-full  px-6 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95">
             Check Prize Status
           </button>
           <a
@@ -129,66 +183,163 @@ export function Winner() {
           >
             WhatsApp Support
           </a>
-        </div>
-
+        </div> */}
+        <Winners></Winners>
         <div className="mt-10 space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-lg">
-            <div className="rounded-[1.75rem] bg-gradient-to-r from-orange-500 to-red-500 p-4 text-center text-white shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em]">1st Prize ₹10,00,00,000</p>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                1st Prize ₹12,00,000
+              </h2>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              <span className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm">KL 050049</span>
-            </div>
-          </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-lg">
-            <div className="rounded-[1.75rem] bg-gradient-to-r from-orange-500 to-red-500 p-4 text-center text-white shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em]">2nd Prize ₹1,00,00,000</p>
-            </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              {['KL 01025', 'KL 02584', 'KL 12458', 'KL 15450'].map((code) => (
-                <span key={code} className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm">{code}</span>
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 050049'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black  text-black">{code}</span>
+                </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-lg">
-            <div className="rounded-[1.75rem] bg-gradient-to-r from-orange-500 to-red-500 p-4 text-center text-white shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em]">3rd Prize ₹12,00,000</p>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                2nd Prize ₹12,00,000
+              </h2>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              {['KL468568', 'KL 657832', 'KL 895848', 'KL 078649', 'KL 000401', 'KL 145247'].map((code) => (
-                <span key={code} className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm">{code}</span>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 0102445', 'KL 0255584', 'KL 1235458', 'KL 1546650'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
               ))}
             </div>
+
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-lg">
-            <div className="rounded-[1.75rem] bg-gradient-to-r from-orange-500 to-red-500 p-4 text-center text-white shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em]">4th Prize ₹8,00,000</p>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                3th Prize ₹12,00,000
+              </h2>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 878788', 'KL 657832', 'KL 895848', 'KL 078649', 'KL 000401', 'KL 145247'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                4th Prize ₹12,00,000
+              </h2>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
               {['KL 002665', 'KL 898226', 'KL 068550', 'KL 092438', 'KL 012587', 'KL 987522', 'KL 145896', 'KL 128796'].map((code) => (
-                <span key={code} className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm">{code}</span>
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-lg">
-            <div className="rounded-[1.75rem] bg-gradient-to-r from-orange-500 to-red-500 p-4 text-center text-white shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em]">5th Prize ₹50,000</p>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                5th Prize ₹12,00,000
+              </h2>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              {['KL 458785', 'KL 021856', 'KL 125478', 'KL 254587', 'KL 021548', 'KL 128564', 'KL 125876', 'KL 203654', 'KL 333855', 'KL 154788'].map((code) => (
-                <span key={code} className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm">{code}</span>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 468568', 'KL 021856', 'KL 254587', 'KL 021548', 'KL 128564', 'KL 203654', 'KL 333855', 'KL 154788'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
               ))}
             </div>
           </div>
+
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                6th Prize ₹12,00,000
+              </h2>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 000455', 'KL 909990', 'KL 098999', 'KL 111333', 'KL 876787', 'KL 809998', 'KL 787789', 'KL 099990'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                7th Prize ₹12,00,000
+              </h2>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 777777', 'KL 098345', 'KL 999000', 'KL 098887', 'KL 099909', 'KL 878666', 'KL 000999'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mx-auto max-w-4xl rounded-[40px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-8">
+            <div className="rounded-[24px] bg-gradient-to-r from-orange-300 to-red-500 py-5 text-center">
+              <h2 className="text-4xl font-extrabold text-white">
+                8th Prize ₹12,00,000
+              </h2>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-y-8 place-items-center">
+              {['KL 909988', 'KL 000090', 'KL 909099', 'KL 787777', 'KL 098989', 'KL 090989', 'KL 908878', 'KL 787790', 'KL 999888', 'KL 898990', 'KL 000989', 'KL 000989'].map((code) => (
+                <div
+                  key={code}
+                  className="flex h-10 w-45 gap-2 items-center justify-center rounded-full bg-white shadow-lg"
+                >
+                  <span className="text-3xl font-black text-black">{code}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
-
-      {/* </div> */}
-      {/* </div> */}
     </div>
   );
 }
