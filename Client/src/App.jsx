@@ -7,6 +7,7 @@ import { Winner } from '@/components/Winner'
 import { Contact } from '@/components/Contact'
 import { FAQ } from '@/components/FAQ'
 import { Admin } from '@/components/Admin'
+import { Pricing } from '@/components/Pricing'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <main className="max-w-6xl mx-auto px-2 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/pricing" element={<Pricing />} />
           {/* <Route path="/winners" element={<Winners />} /> */}
           <Route path="/winner" element={<Winner />} />
           <Route path="/contact" element={<Contact />} />

@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Search, CalendarDays, ShieldCheck, Sparkles, Trophy } from 'lucide-react'
 import { Carousel } from './Carousel'
 import { lotteryUtils } from '@/lib/lotteryUtils'
@@ -49,6 +49,90 @@ export function Home() {
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full shadow-md">
                     <Sparkles className="w-4 h-4 text-amber-600" />
                     <span className="text-xs sm:text-sm font-bold text-gray-900">Live Draw Results Updated Daily</span>
+                </div>
+            </section>
+
+            <section className="mb-12 px-4">
+                <div className="max-w-6xl mx-auto rounded-[2rem] bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-6 shadow-[0_25px_80px_rgba(248,215,83,0.25)]">
+                    <div className="rounded-[2rem] bg-white  border border-white/10 p-8 shadow-2xl">
+                        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between text-black">
+                            <div className="max-w-3xl">
+                                <p className="inline-flex rounded-full bg-red-900/90 px-4 py-2 text-xs uppercase tracking-[0.35em] text-amber-200 font-semibold">Festival Dhamaka Offer Tickets</p>
+                                <h2 className="mt-5 text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.04em] text-black">Book Ticket&apos;s NOW!</h2>
+                                <p className="mt-4 text-base leading-relaxed text-black">
+                                    Dear Kerala.Lottery Customer, Golden chance to win ₹25 CRORE. Booking available now for Festival Dhamaka Offer Tickets. Play smart and join the daily draws.
+                                </p>
+                                <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                                    <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-center">
+                                        <p className="text-xs uppercase tracking-[0.3em] text-slate-800">1 Ticket</p>
+                                        <p className="mt-2 text-3xl font-black text-white">₹149/-</p>
+                                    </div>
+                                    <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-center">
+                                        <p className="text-xs uppercase tracking-[0.3em] text-slate-800">3 Tickets</p>
+                                        <p className="mt-2 text-3xl font-black text-white">₹399/-</p>
+                                    </div>
+                                    <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-center">
+                                        <p className="text-xs uppercase tracking-[0.3em] text-slate-800">5 Tickets</p>
+                                        <p className="mt-2 text-3xl font-black text-white">₹596/-</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="rounded-[2rem] border border-amber-300/20 bg-gradient-to-b from-[#f8d364] via-[#fbbf24] to-[#f97316] p-6 text-slate-950 shadow-xl">
+                                <p className="text-xs uppercase tracking-[0.35em] text-slate-800">Daily Draw Times</p>
+                                <p className="mt-4 text-4xl font-black">03 PM</p>
+                                <p className="text-2xl font-black mt-1">&amp; 06:00 PM</p>
+                                <p className="mt-4 text-sm text-slate-900">Win Big Play Smart</p>
+                                <div className="mt-6 rounded-3xl bg-white/90 border border-amber-200 p-4">
+                                    <p className="text-sm uppercase tracking-[0.28em] text-slate-600">Booking charge</p>
+                                    <p className="mt-2 text-2xl font-black text-slate-950">₹399/- for 3 Tickets</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">1st Prize</p>
+                                <p className="mt-2 text-xl font-black">₹25 Cr</p>
+                                <p className="text-sm text-slate-600">1 Person</p>
+                            </div>
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">2nd Prize</p>
+                                <p className="mt-2 text-xl font-black">₹10 Cr</p>
+                                <p className="text-sm text-slate-600">1 Person</p>
+                            </div>
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">3rd Prize</p>
+                                <p className="mt-2 text-xl font-black">₹75 Lakh</p>
+                                <p className="text-sm text-slate-600">1 Person</p>
+                            </div>
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">4th Prize</p>
+                                <p className="mt-2 text-xl font-black">₹25 Lakh</p>
+                                <p className="text-sm text-slate-600">12 Person</p>
+                            </div>
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">5th Prize</p>
+                                <p className="mt-2 text-xl font-black">₹12 Lakh</p>
+                                <p className="text-sm text-slate-600">16 Person</p>
+                            </div>
+                            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-r from-[#f3d33f] via-[#f6b72d] to-[#ef5f24] p-5 text-white shadow-sm">
+                                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">6th Prize</p>
+                                <p className="mt-2 text-xl font-black">₹5 Lakh</p>
+                                <p className="text-sm text-slate-600">36 Person</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 rounded-[1.75rem] bg-red-600/10 border border-red-500/20 p-6 text-red-950">
+                            <p className="font-semibold">Consolation Priz@s for 665 lucky winners</p>
+                        </div>
+
+                        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm text-slate-700">Festival Dhamaka Offer. Mega Kerala Lottery. Book now for a golden chance to win ₹25 CRORE.</p>
+                            <Link to="/pricing" className="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-lg shadow-red-500/25 transition hover:bg-red-700">
+                                View Pricing
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </section>
 

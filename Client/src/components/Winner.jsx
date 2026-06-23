@@ -51,12 +51,12 @@ export function Winner() {
   )
 
   return (
-    <div className="min-h-screen bg-[#071b38] text-white">
+    <div className="min-h-screen  text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.18),_transparent_24%),radial-gradient(circle_at_bottom,_rgba(236,72,153,0.12),_transparent_35%)] pointer-events-none" />
       <div className="relative mx-auto max-w-3xl px-4 py-10">
         <div className="mb-8 rounded-[2.5rem] border border-white/10 bg-white/5 shadow-[0_40px_120px_rgba(0,0,0,0.35)] backdrop-blur-xl overflow-hidden">
           <div className="relative overflow-hidden">
-            <img src="/images/banner.png" alt="Lottery banner" className="w-full object-cover opacity-90" />
+            <img src="/images/winner logo.jpeg" alt="Lottery banner" className="w-full object-cover opacity-90" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/50" />
           </div>
 
@@ -68,8 +68,8 @@ export function Winner() {
               <p className="mt-2 text-sm text-slate-200">Your lottery result is here. Check your winning ticket details below.</p>
             </div>
 
-            <div className="mt-8 rounded-[2rem] border border-white/10 bg-slate-950/90 p-6 shadow-lg">
-              <div className="rounded-[1.75rem] bg-slate-900/80 p-5 text-center shadow-inner">
+            <div className="mt-8 rounded-[2rem] border border-white/10  p-4 shadow-lg">
+              <div className="rounded-[1.75rem] bg-gradient-to-r from-[#f5d96b] via-[#ffe98a] to-[#f5d96b] p-5 text-center shadow-inner">
                 <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Name</p>
                 <p className="mt-2 text-2xl font-bold text-white">{winner.name}</p>
               </div>
