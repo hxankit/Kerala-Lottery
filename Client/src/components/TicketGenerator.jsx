@@ -4,11 +4,11 @@ import jsPDF from 'jspdf'
 
 export function TicketGenerator() {
   const [ticketNumber, setTicketNumber] = useState('')
-  const [drawTime, setDrawTime] = useState('06 PM')
+  const [ticketSlot, setTicketSlot] = useState('Slot 1')
   const [imgLoaded, setImgLoaded] = useState(false)
   const ticketRef = useRef(null)
 
-  const times = ['06 AM', '06 PM', '12 PM', '03 PM', '04 PM', '05 PM']
+  const slots = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4', 'Slot 5', 'Slot 6']
 
   const handleGeneratePDF = async () => {
     if (!ticketNumber.trim()) {
@@ -68,18 +68,18 @@ export function TicketGenerator() {
         </div>
 
         <div>
-          <label htmlFor="draw-time" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-            Draw Time
+          <label htmlFor="ticket-slot" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+            Ticket Slot
           </label>
           <select
-            id="draw-time"
-            value={drawTime}
-            onChange={(e) => setDrawTime(e.target.value)}
+            id="ticket-slot"
+            value={ticketSlot}
+            onChange={(e) => setTicketSlot(e.target.value)}
             className="w-full px-4 py-3 border-2 border-amber-600 rounded-lg bg-white text-sm font-medium text-gray-900 focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-600/20 transition"
           >
-            {times.map((time) => (
-              <option key={time} value={time}>
-                {time}
+            {slots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
               </option>
             ))}
           </select>
@@ -104,7 +104,7 @@ export function TicketGenerator() {
 
           <div className="absolute right-[42%] bottom-[22%] pointer-events-none">
             <div className="text-[9px] font-bold text-white drop-shadow-sm">
-              {drawTime}
+              {ticketSlot}
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function TicketGenerator() {
       </button>
 
       <p className="text-xs text-gray-500 text-center">
-        The PDF will include the ticket number and draw time overlaid on the lottery ticket image.
+        The PDF will include the ticket number and selected slot overlaid on the lottery ticket image.
       </p>
     </div>
   )

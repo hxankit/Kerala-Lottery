@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 const items = [
   { q: 'How do I check if I won?', a: 'On the home page, enter your registered 10-digit phone number in the "Check Your Result" box and press Search. If you are a winner, your winner details page will open automatically.' },
-  { q: 'When are the draws held?', a: 'The Sthree Sakthi lottery draw is held every Tuesday at 3:00 PM. Results are published live on this site right after the draw.' },
+  { q: 'When are the draws held?', a: 'The Sthree Sakthi lottery draw is held every Tuesday. Results are published live on this site right after the draw.' },
   { q: 'How do I claim my prize?', a: 'Winners should surrender the winning ticket along with valid ID proof at the Directorate of Kerala State Lotteries within 30 days of the draw. Use the Contact page to reach our support team.' },
   { q: 'Is this the official website?', a: 'Results shown here are for reference only. Always verify your result with the official Kerala State Lotteries gazette before claiming any prize.' },
   { q: 'I lost my ticket. What should I do?', a: 'The physical ticket is mandatory to claim a prize. Unfortunately a lost or damaged ticket cannot be used for claiming. Keep your ticket safe until the prize is claimed.' },

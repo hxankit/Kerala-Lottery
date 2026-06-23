@@ -102,14 +102,6 @@ export function Winner() {
               <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-violet-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 transition hover:opacity-95">
                 Check Prize Status
               </button>
-              <a
-                href="https://api.whatsapp.com/send/?phone=%2B918981866012&text=Hello%20I%20am%20a%20lottery%20winner&type=phone_number&app_absent=0"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:opacity-95"
-              >
-                WhatsApp Support
-              </a>
             </div>
 
             <div className="mt-10 space-y-6">

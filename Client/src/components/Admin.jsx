@@ -48,6 +48,11 @@ export function Admin() {
   const [ticketNumber, setTicketNumber] = useState('')
   const [winnerError, setWinnerError] = useState(false)
   const [winners, setWinners] = useState([])
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [editName, setEditName] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editTicketNumber, setEditTicketNumber] = useState('')
+  const [editPosition, setEditPosition] = useState('5Th')
 
   useEffect(() => {
     async function loadWinners() {
@@ -112,7 +117,65 @@ export function Admin() {
       const data = await response.json()
       setWinners(data.winners || [])
       setName(''); setPhone(''); setTicketNumber('')
+      cancelEdit()
       // navigate('/winners')
+    } catch (error) {
+      console.error(error)
+      setApiError(true)
+    }
+  }
+
+  function startEdit(index) {
+    const winner = winners[index]
+    if (!winner) return
+    setEditingIndex(index)
+    setEditName(winner.name || '')
+    setEditPhone(winner.phone || '')
+    setEditTicketNumber(winner.ticketNumber || '')
+    setEditPosition(winner.position || '5Th')
+    setWinnerError(false)
+    setApiError(false)
+  }
+
+  function cancelEdit() {
+    setEditingIndex(null)
+    setEditName('')
+    setEditPhone('')
+    setEditTicketNumber('')
+    setEditPosition('5Th')
+  }
+
+  async function updateWinner(index) {
+    const n = editName.trim(), p = editPhone.trim(), ticket = editTicketNumber.trim(), position = editPosition.trim() || '5Th'
+    if (!n || !p || !ticket) { setWinnerError(true); return }
+    setWinnerError(false)
+    setApiError(false)
+    try {
+      const response = await fetch(`/api/winners/${index}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position }),
+      })
+      if (!response.ok) { setApiError(true); return }
+      const data = await response.json()
+      setWinners(data.winners || [])
+      cancelEdit()
+    } catch (error) {
+      console.error(error)
+      setApiError(true)
+    }
+  }
+
+  async function deleteWinner(index) {
+    setApiError(false)
+    try {
+      const response = await fetch(`/api/winners/${index}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) { setApiError(true); return }
+      const data = await response.json()
+      setWinners(data.winners || [])
+      if (editingIndex === index) cancelEdit()
     } catch (error) {
       console.error(error)
       setApiError(true)
@@ -124,7 +187,7 @@ export function Admin() {
 
   if (!authed) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-full lg:max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <HeaderBanner label="Admin Portal · Kerala State Lotteries" />
 
         <div className="bg-[#fffaf0] border-2 border-amber-400/40 border-t-0 rounded-b-2xl shadow-lg p-8 space-y-5">
@@ -175,7 +238,7 @@ export function Admin() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
+    <div className="max-w-full lg:max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <HeaderBanner label="Admin Portal · Kerala State Lotteries" />
 
       <div className="bg-[#fffaf0] border-2 border-amber-400/40 border-t-0 rounded-b-2xl shadow-lg p-8 space-y-5">
@@ -226,62 +289,164 @@ export function Admin() {
 
         {/* Add Winner form */}
         {activeTab === 0 && (
-          <form onSubmit={addWinner} className="space-y-4" autoComplete="off">
-            <div>
-              <label htmlFor="name" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-                Winner Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Full name of the winner"
-                className={inputClass}
-                required
-              />
-            </div>
+          <>
+            <form onSubmit={addWinner} className="space-y-4" autoComplete="off">
+              <div>
+                <label htmlFor="name" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Winner Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full name of the winner"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div>
-              <label htmlFor="phone" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 00000 00000"
-                className={inputClass}
-                required
-              />
-            </div>
+              <div>
+                <label htmlFor="phone" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 00000 00000"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div>
-              <label htmlFor="ticket" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-                Ticket Number
-              </label>
-              <input
-                id="ticket"
-                type="text"
-                value={ticketNumber}
-                onChange={(e) => setTicketNumber(e.target.value)}
-                placeholder="e.g. SS 123456"
-                className={inputClass}
-                required
-              />
-            </div>
+              <div>
+                <label htmlFor="ticket" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Ticket Number
+                </label>
+                <input
+                  id="ticket"
+                  type="text"
+                  value={ticketNumber}
+                  onChange={(e) => setTicketNumber(e.target.value)}
+                  placeholder="e.g. SS 123456"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            {winnerError && <Alert type="red">Please fill in name, phone number, and ticket number.</Alert>}
-            {apiError && <Alert type="yellow">Unable to save winner. Please try again.</Alert>}
+              {winnerError && <Alert type="red">Please fill in name, phone number, and ticket number.</Alert>}
+              {apiError && <Alert type="yellow">Unable to save winner. Please try again.</Alert>}
 
-            <button
-              type="submit"
-              className="w-full bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white font-extrabold py-3 rounded-lg shadow transition-all duration-150"
-            >
-              🏆 &nbsp;Add Winner
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="w-full bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white font-extrabold py-3 rounded-lg shadow transition-all duration-150"
+              >
+                🏆 &nbsp;Add Winner
+              </button>
+            </form>
+
+            {winners.length > 0 && (
+              <div className="mt-10 overflow-x-auto rounded-3xl border border-amber-200 bg-white p-4 shadow-sm">
+                <h2 className="mb-4 text-lg font-bold text-gray-900">Winner Management</h2>
+                <table className="min-w-full divide-y divide-amber-200 text-sm">
+                  <thead className="bg-amber-100 text-left text-xs uppercase tracking-wide text-amber-700">
+                    <tr>
+                      <th className="px-3 py-3">#</th>
+                      <th className="px-3 py-3">Name</th>
+                      <th className="px-3 py-3">Phone</th>
+                      <th className="px-3 py-3">Ticket</th>
+                      <th className="px-3 py-3">Position</th>
+                      <th className="px-3 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-amber-200">
+                    {winners.map((winner, index) => (
+                      <tr key={index} className="bg-white">
+                        <td className="px-3 py-3 font-semibold text-slate-800">{index + 1}</td>
+                        {editingIndex === index ? (
+                          <>
+                            <td className="px-3 py-3">
+                              <input
+                                type="text"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="tel"
+                                value={editPhone}
+                                onChange={(e) => setEditPhone(e.target.value)}
+                                className="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="text"
+                                value={editTicketNumber}
+                                onChange={(e) => setEditTicketNumber(e.target.value)}
+                                className="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="text"
+                                value={editPosition}
+                                onChange={(e) => setEditPosition(e.target.value)}
+                                className="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm"
+                              />
+                            </td>
+                            <td className="px-3 py-3 space-x-2">
+                              <button
+                                type="button"
+                                onClick={() => updateWinner(index)}
+                                className="rounded-full bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={cancelEdit}
+                                className="rounded-full bg-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-300"
+                              >
+                                Cancel
+                              </button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-3 py-3 text-slate-700">{winner.name}</td>
+                            <td className="px-3 py-3 font-mono text-slate-700">{winner.phone}</td>
+                            <td className="px-3 py-3 font-mono text-slate-700">{winner.ticketNumber}</td>
+                            <td className="px-3 py-3 text-slate-700">{winner.position || '5Th'}</td>
+                            <td className="px-3 py-3 space-x-2">
+                              <button
+                                type="button"
+                                onClick={() => startEdit(index)}
+                                className="rounded-full bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteWinner(index)}
+                                className="rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
 
         {/* Make PDF tab */}

@@ -55,7 +55,6 @@ export function Winners() {
               <tr>
                 <th className="px-6 py-4 text-left font-bold text-ink">#</th>
                 <th className="px-6 py-4 text-left font-bold text-ink">Winner Name</th>
-                <th className="px-6 py-4 text-left font-bold text-ink">Phone Number</th>
                 <th className="px-6 py-4 text-left font-bold text-ink">Ticket Number</th>
                 <th className="px-6 py-4 text-left font-bold text-ink">Position</th>
                 {isAdmin && <th className="px-6 py-4 text-center font-bold text-ink">Action</th>}
@@ -66,7 +65,6 @@ export function Winners() {
                 <tr key={index} className="border-b hover:bg-cream-soft transition">
                   <td className="px-6 py-4 font-semibold">{index + 1}</td>
                   <td className="px-6 py-4">{winner.name}</td>
-                  <td className="px-6 py-4 font-mono">{winner.phone}</td>
                   <td className="px-6 py-4 font-mono">{winner.ticketNumber || '—'}</td>
                   <td className="px-6 py-4">{winner.position || '—'}</td>
                   {isAdmin && (

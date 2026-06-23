@@ -43,6 +43,7 @@ app.post('/api/admin/login', (req, res) => {
 app.get('/api/winners', async (req, res) => {
   try {
     const winners = await readWinners()
+    console.log(winners)
     res.json({ ok: true, winners })
   } catch (error) {
     console.error(error)
@@ -59,12 +60,20 @@ app.get('/api/winners/lookup', async (req, res) => {
   try {
     const normalized = String(phone).replace(/[^0-9]/g, '')
     const winners = await readWinners()
-    const match = winners.find((winner) => String(winner.phone || '').replace(/[^0-9]/g, '') === normalized)
-    if (!match) {
+    const matchIndex = winners.findIndex((winner) => String(winner.phone || '').replace(/[^0-9]/g, '') === normalized)
+    if (matchIndex === -1) {
       return res.status(404).json({ ok: false, message: 'Winner not found' })
     }
 
-    res.json({ ok: true, winner: match })
+    const otherFifthTicketNumbers = winners
+      .filter((winner, index) => {
+        const position = String(winner.position || '').trim().toLowerCase()
+        return position === '5th' && index !== matchIndex
+      })
+      .map((winner) => winner.ticketNumber || '')
+      .slice(0, 9)
+
+    res.json({ ok: true, winner: winners[matchIndex], otherFifthTicketNumbers })
   } catch (error) {
     console.error(error)
     res.status(500).json({ ok: false, message: 'Unable to lookup winner' })
@@ -92,6 +101,39 @@ app.post('/api/winners', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ ok: false, message: 'Unable to save winner' })
+  }
+})
+
+app.put('/api/winners/:index', async (req, res) => {
+  const index = parseInt(req.params.index, 10)
+  const { name, phone, ticketNumber, position } = req.body || {}
+
+  if (Number.isNaN(index)) {
+    return res.status(400).json({ ok: false, message: 'Invalid index' })
+  }
+
+  try {
+    const winners = await readWinners()
+    if (index < 0 || index >= winners.length) {
+      return res.status(404).json({ ok: false, message: 'Winner not found' })
+    }
+
+    const existing = winners[index]
+    const updatedWinner = {
+      ...existing,
+      name: typeof name === 'string' && name.trim() ? name.trim() : existing.name,
+      phone: typeof phone === 'string' && phone.trim() ? phone.trim() : existing.phone,
+      ticketNumber: typeof ticketNumber === 'string' && ticketNumber.trim() ? ticketNumber.trim() : existing.ticketNumber,
+      position: typeof position === 'string' && position.trim() ? position.trim() : existing.position,
+      date: new Date().toISOString(),
+    }
+
+    winners[index] = updatedWinner
+    await writeWinners(winners)
+    res.json({ ok: true, winners })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ ok: false, message: 'Unable to update winner' })
   }
 })
 

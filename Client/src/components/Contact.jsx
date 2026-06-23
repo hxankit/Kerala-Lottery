@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react'
+import { MapPin, Mail, Clock, Send, CheckCircle } from 'lucide-react'
 import { lotteryUtils } from '@/lib/lotteryUtils'
 
 const INFO_CARDS = [
@@ -9,22 +9,15 @@ const INFO_CARDS = [
     value: '3rd Floor, KSRTC Building, Thampanoor, Thiruvananthapuram 695001',
   },
   {
-    icon: Phone,
-    label: 'Phone',
-    value: '0471 – 2305230',
-    sub: 'Mon – Sat, 10 AM – 5 PM',
-  },
-  {
     icon: Mail,
     label: 'Email',
     value: 'support@keralalotteries.gov.in',
   },
-  {
-    icon: Clock,
-    label: 'Draw time',
-    value: 'Every Tuesday',
-    sub: '3:00 PM',
-  },
+  // {
+  //   icon: Clock,
+  //   label: 'Draw schedule',
+  //   value: 'Every Tuesday',
+  // },
 ]
 
 export function Contact() {
@@ -51,12 +44,12 @@ export function Contact() {
         Kerala State Lotteries
       </p>
       <h1 className="text-3xl font-bold text-ink mb-1">Contact us</h1>
-      <p className="text-muted mb-8">
-        Reach our support team — we're here to help you Mon–Sat, 10 AM to 5 PM.
+      <p className="text-black mb-8">
+        Reach our support team — we're here to help you with any questions.
       </p>
 
       {/* Info cards */}
-      <div className="grid grid-cols-2 gap-3 mb-8">
+      <div className="grid grid-cols-1 gap-3 mb-8 md:grid-cols-2">
         {INFO_CARDS.map(({ icon: Icon, label, value, sub }) => (
           <div key={label} className="bg-white border border-line rounded-xl p-4 flex gap-3 items-start">
             <div className="w-9 h-9 rounded-lg bg-orange/10 flex items-center justify-center flex-shrink-0">
