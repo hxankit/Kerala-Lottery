@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react'
+﻿import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Search, CalendarDays, ShieldCheck, Sparkles, Trophy } from 'lucide-react'
 import { Carousel } from './Carousel'
@@ -8,7 +8,24 @@ export function Home() {
     const navigate = useNavigate()
     const [phone, setPhone] = useState('')
     const [error, setError] = useState(false)
+    const banners = [
+        "/images/banner1.jpg",
+        "/images/banner2.jpg",
+        "/images/banner3.jpg",
+        "/images/banner4.jpg",
+        "/images/banner6.jpg",
+        "/images/banner7.jpg",
+    ];
 
+    const [currentBanner, setCurrentBanner] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentBanner((prev) => (prev + 1) % banners.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
     const slides = [
         { src: '/images/slide1.png', alt: 'Kerala State Lotteries live draw event' },
         { src: '/images/slide2.png', alt: 'Kerala lottery tickets' },
@@ -36,21 +53,28 @@ export function Home() {
     return (
         <>
             <section className="mb-8 relative overflow-hidden shadow-lg">
-                <div
-                    className="absolute inset-0 bg-center bg-cover scale-110 blur-xl opacity-50"
-                    style={{ backgroundImage: 'url(/images/banner.png)' }}
-                ></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                <img
-                    src="/images/banner.png"
-                    alt="Kerala Lottery banner"
-                    className="relative w-full h-36 sm:h-44 md:h-56 lg:h-64 object-contain mx-auto"
-                />
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full shadow-md">
-                    <Sparkles className="w-4 h-4 text-amber-600" />
-                    <span className="text-xs sm:text-sm font-bold text-gray-900">Live Draw Results Updated Daily</span>
-                </div>
-            </section>
+  <div
+    className="absolute inset-0 bg-center bg-cover scale-110 blur-xl opacity-50 transition-all duration-700"
+    style={{
+      backgroundImage: `url(${banners[currentBanner]})`,
+    }}
+  ></div>
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+  <img
+    src={banners[currentBanner]}
+    alt="Kerala Lottery banner"
+    className="relative w-full h-36 sm:h-44 md:h-56 lg:h-64 object-contain mx-auto transition-all duration-700"
+  />
+
+  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full shadow-md">
+    <Sparkles className="w-4 h-4 text-amber-600" />
+    <span className="text-xs sm:text-sm font-bold text-gray-900">
+      Live Draw Results Updated Daily
+    </span>
+  </div>
+</section>
             <section className="mb-8 px-4">
                 <div className="max-w-2xl mx-auto relative">
                     <div className="absolute -top-3 -left-3 w-20 h-20 bg-yellow-300/40 rounded-full blur-2xl"></div>
@@ -274,7 +298,7 @@ export function Home() {
                 </div>
             </section>
 
-            <section className="mb-8 px-4">
+            <section className="mb-2 px-4">
                 <div className="max-w-4xl mx-auto bg-gradient-to-br from-amber-50 to-white rounded-2xl p-4 sm:p-6 shadow-xl border border-amber-200">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                         <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Sthree Sakthi Lottery Result</h2>
@@ -319,10 +343,26 @@ export function Home() {
 
                     </div>
 
-                    <p className="text-xs text-gray-500 mt-6 border-t border-amber-200 pt-4 flex items-center gap-1.5">
-                        <span>⚠️</span>
-                        Results are for reference only. Always verify with the official Kerala State Lotteries gazette.
-                    </p>
+                </div>
+            </section>
+            <section className="bg-white py-10">
+                <div className="max-w-7xl mx-auto px-4">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl font-bold text-slate-900">
+                            Find Us on Google Maps
+                        </h2>
+                    </div>
+
+                    <div className="overflow-hidden rounded-3xl shadow-lg border border-gray-200">
+                        <iframe
+                            title="Google Map"
+                            src="https://maps.google.com/maps?q=8.488452,76.951972&z=18&output=embed"
+                            className="w-full h-[500px] rounded-3xl"
+                            loading="lazy"
+                            allowFullScreen
+                            referrerPolicy="no-referrer-when-downgrade"
+                        />
+                    </div>
                 </div>
             </section>
         </>

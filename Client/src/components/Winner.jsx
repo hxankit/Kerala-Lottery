@@ -180,15 +180,15 @@ export function Winner() {
     ];
 
     return (
-      <div className="mx-auto w-full max-w-6xl rounded-[32px] border border-yellow-200 bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-3 sm:p-4 shadow-2xl">
+      <div className="mx-auto w-full max-w-6xl rounded-[32px] border border-yellow-200 bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-2 sm:p-4 shadow-2xl">
         <div className="space-y-4">
           {winners.map((winner) => (
             <div
               key={winner.title}
               className="grid gap-3 rounded-3xl bg-white p-3 sm:p-4 shadow-lg sm:grid-cols-[1.8fr_1fr] sm:items-center"
             >
-              <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-[#48ef1f] p-3 text-center shadow-lg sm:text-left">
-                <h2 className="text-2xl sm:text-3xl font-black text-black">
+              <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-[#48ef1f] p-2 text-center shadow-lg sm:text-left">
+                <h2 className="text-1xl sm:text-3xl font-black text-black">
                   {winner.title}
                 </h2>
                 <Trophy size={24} className="fill-yellow-500 text-yellow-500" />
@@ -225,7 +225,7 @@ export function Winner() {
   }
 
   return (
-    <div className="min-h-screen  bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen  bg-slate-50 px-1 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-5xl rounded-[32px] border border-slate-200 bg-white p-3 shadow-xl sm:p-5 text-slate-900">
 
         <div className="flex justify-center mb-6">
@@ -295,7 +295,7 @@ export function Winner() {
               {prizeSections.map((prize) => (
                 <div
                   key={prize.label}
-                  className="rounded-[28px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-4 shadow-sm border border-white/20"
+                  className="rounded-[28px] bg-gradient-to-b from-[#fed7aa] to-[#fde68a] p-2 shadow-sm border border-white/20"
                 >
                   <div className="rounded-[18px] bg-gradient-to-r from-orange-300 to-red-500 py-2 text-center">
                     <h2 className="text-xl sm:text-2xl font-extrabold text-white">
@@ -305,13 +305,13 @@ export function Winner() {
                   </div>
 
                   <div
-                    className={`mt-3 grid gap-2 ${prize.codes.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                    className={`mt-3 grid gap-2 ${prize.codes.length > 1 ? "grid-cols-3" : "grid-cols-1"
                       }`}
                   >
                     {prize.codes.map((code) => (
                       <div
                         key={code}
-                        className="rounded-full bg-white px-3 py-2 text-center text-sm font-bold text-slate-900 shadow-sm"
+                        className="rounded-full bg-white px-3 py-2 text-center text-xs font-bold text-slate-900 shadow-sm"
                       >
                         {code}
                       </div>
