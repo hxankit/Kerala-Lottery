@@ -104,9 +104,8 @@ export function Header() {
         {isOpen && (
           <>
             <div className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30" onClick={() => setIsOpen(false)} />
-            <aside
-              className="fixed top-0 left-0 h-screen w-[80%] max-w-sm bg-gradient-to-b from-[#f5d96b] to-[#ffe98a] shadow-2xl lg:hidden z-50 pt-20 border-r-4 border-orange overflow-y-auto"
-            >
+            <aside className="fixed left-0 top-0 h-full w-full sm:max-w-xs bg-gradient-to-b from-[#f5d96b] to-[#ffe98a] shadow-2xl lg:hidden z-40 pt-16 border-r-4 border-orange overflow-y-auto">
+              
               <div className="p-4 space-y-2">
                 {navItems.map((item) => (
                   <Link
