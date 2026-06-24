@@ -87,7 +87,7 @@ export function Winner() {
     {
       label: '5th Prize',
       amount: '₹12 Lakh',
-      codes: OtherWinners.length ? OtherWinners : ['KL 123456'],
+      codes: OtherWinners?.length ? OtherWinners : [],
     },
     {
       label: '6th Prize',
@@ -287,9 +287,9 @@ export function Winner() {
         <p className="mt-2 text-xs mb-6 text-center uppercase tracking-[0.24em] text-black">
           If prize above ₹5 Lakh, Govt. Tax Applicable.
         </p>
-          <p className="mt-2 text-xs mb-6 text-center uppercase tracking-[0.24em] text-black">
-  {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
-</p>
+        <p className="mt-2 text-xs mb-6 text-center uppercase tracking-[0.24em] text-black">
+          {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
+        </p>
         <Winners></Winners>
         <div className="mt-10">
           <div className="mx-auto max-w-6xl">
