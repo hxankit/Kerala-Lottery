@@ -266,9 +266,17 @@ export function Winner() {
           If prize above ₹5 Lakh, Govt. Tax Applicable.
         </p> */}
 
-        <p className="mt-2 text-5xl sm:text-6xl font-bold text-red-600 text-center leading-tight break-words">
-          {winner?.name || "N/A"}
-        </p>
+        <p
+  className={`mt-2 font-bold text-red-600 text-center leading-tight break-words ${
+    winner?.name?.length > 30
+      ? "text-2xl sm:text-3xl"
+      : winner?.name?.length > 20
+      ? "text-3xl sm:text-4xl"
+      : "text-5xl sm:text-6xl"
+  }`}
+>
+  {winner?.name || "N/A"}
+</p>
         <p className="mt-2 text-2xl sm:text-3xl font-bold text-red-600 text-center break-words">
           {winner?.phone || "N/A"}
         </p>
