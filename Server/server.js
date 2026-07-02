@@ -7,7 +7,8 @@ const crypto = require('crypto')
 const app = express()
 const PORT = process.env.PORT || 4000
 const ADMIN_PASSWORD = 'DevxExpanzia'
-const SUPERADMIN_USERNAME = 'superadmin'
+const SUPERADMIN_EMAIL = 'superadmin@gmail.com'
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const WINNERS_PATH = path.join(__dirname, 'winners.json')
 const USERS_PATH = path.join(__dirname, 'users.json')
 const CLIENT_BUILD_PATH = path.join(__dirname, '../Client/dist')
@@ -46,8 +47,8 @@ async function writeUsers(users) {
   await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2), 'utf8')
 }
 
-function publicUser({ username, createdAt, createdBy }) {
-  return { username, createdAt, createdBy }
+function publicUser({ email, createdAt, createdBy }) {
+  return { email, createdAt, createdBy }
 }
 
 // ---------- password hashing ----------
@@ -67,12 +68,12 @@ function verifyPassword(password, salt, hash) {
 }
 
 // ---------- sessions (in-memory tokens) ----------
-const sessions = new Map() // token -> { username, role, expires }
+const sessions = new Map() // token -> { email, role, expires }
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000 // 12 hours
 
-function issueSession(username, role) {
+function issueSession(email, role) {
   const token = crypto.randomBytes(32).toString('hex')
-  sessions.set(token, { username, role, expires: Date.now() + SESSION_TTL_MS })
+  sessions.set(token, { email, role, expires: Date.now() + SESSION_TTL_MS })
   return token
 }
 
@@ -104,28 +105,28 @@ function requireAuth(roles = ['superadmin', 'subadmin']) {
 
 // ---------- auth routes ----------
 app.post('/api/admin/login', async (req, res) => {
-  const { username, password } = req.body || {}
+  const { email, password } = req.body || {}
   if (typeof password !== 'string' || !password) {
     return res.status(400).json({ ok: false, message: 'Password is required' })
   }
-  const uname = typeof username === 'string' && username.trim() ? username.trim() : SUPERADMIN_USERNAME
+  const mail = typeof email === 'string' && email.trim() ? email.trim().toLowerCase() : SUPERADMIN_EMAIL
 
-  if (uname.toLowerCase() === SUPERADMIN_USERNAME) {
+  if (mail === SUPERADMIN_EMAIL) {
     if (password === ADMIN_PASSWORD) {
-      const token = issueSession(SUPERADMIN_USERNAME, 'superadmin')
-      return res.json({ ok: true, token, username: SUPERADMIN_USERNAME, role: 'superadmin' })
+      const token = issueSession(SUPERADMIN_EMAIL, 'superadmin')
+      return res.json({ ok: true, token, email: SUPERADMIN_EMAIL, role: 'superadmin' })
     }
     return res.status(401).json({ ok: false, message: 'Invalid password' })
   }
 
   try {
     const users = await readUsers()
-    const user = users.find((u) => u.username.toLowerCase() === uname.toLowerCase())
+    const user = users.find((u) => u.email.toLowerCase() === mail)
     if (!user || !verifyPassword(password, user.salt, user.hash)) {
-      return res.status(401).json({ ok: false, message: 'Invalid username or password' })
+      return res.status(401).json({ ok: false, message: 'Invalid email or password' })
     }
-    const token = issueSession(user.username, 'subadmin')
-    return res.json({ ok: true, token, username: user.username, role: 'subadmin' })
+    const token = issueSession(user.email, 'subadmin')
+    return res.json({ ok: true, token, email: user.email, role: 'subadmin' })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ ok: false, message: 'Login failed' })
@@ -139,7 +140,7 @@ app.post('/api/admin/logout', requireAuth(), (req, res) => {
 })
 
 app.get('/api/admin/me', requireAuth(), (req, res) => {
-  res.json({ ok: true, username: req.session.username, role: req.session.role })
+  res.json({ ok: true, email: req.session.email, role: req.session.role })
 })
 
 // ---------- subadmin management (superadmin only) ----------
@@ -154,26 +155,26 @@ app.get('/api/admin/users', requireAuth(['superadmin']), async (req, res) => {
 })
 
 app.post('/api/admin/users', requireAuth(['superadmin']), async (req, res) => {
-  const { username, password } = req.body || {}
-  const uname = typeof username === 'string' ? username.trim() : ''
-  if (!uname || !password || String(password).length < 6) {
-    return res.status(400).json({ ok: false, message: 'Username and a password of at least 6 characters are required' })
+  const { email, password } = req.body || {}
+  const mail = typeof email === 'string' ? email.trim().toLowerCase() : ''
+  if (!mail || !EMAIL_REGEX.test(mail) || !password || String(password).length < 6) {
+    return res.status(400).json({ ok: false, message: 'A valid email and a password of at least 6 characters are required' })
   }
-  if (uname.toLowerCase() === SUPERADMIN_USERNAME) {
-    return res.status(400).json({ ok: false, message: 'That username is reserved' })
+  if (mail === SUPERADMIN_EMAIL) {
+    return res.status(400).json({ ok: false, message: 'That email is reserved' })
   }
   try {
     const users = await readUsers()
-    if (users.some((u) => u.username.toLowerCase() === uname.toLowerCase())) {
-      return res.status(409).json({ ok: false, message: 'A subadmin with that username already exists' })
+    if (users.some((u) => u.email.toLowerCase() === mail)) {
+      return res.status(409).json({ ok: false, message: 'A subadmin with that email already exists' })
     }
     const { salt, hash } = createPasswordRecord(password)
     users.push({
-      username: uname,
+      email: mail,
       salt,
       hash,
       createdAt: new Date().toISOString(),
-      createdBy: req.session.username,
+      createdBy: req.session.email,
     })
     await writeUsers(users)
     res.status(201).json({ ok: true, users: users.map(publicUser) })
@@ -183,15 +184,15 @@ app.post('/api/admin/users', requireAuth(['superadmin']), async (req, res) => {
   }
 })
 
-app.put('/api/admin/users/:username', requireAuth(['superadmin']), async (req, res) => {
-  const { username } = req.params
+app.put('/api/admin/users/:email', requireAuth(['superadmin']), async (req, res) => {
+  const targetEmail = decodeURIComponent(req.params.email).toLowerCase()
   const { password } = req.body || {}
   if (!password || String(password).length < 6) {
     return res.status(400).json({ ok: false, message: 'Password must be at least 6 characters' })
   }
   try {
     const users = await readUsers()
-    const idx = users.findIndex((u) => u.username === username)
+    const idx = users.findIndex((u) => u.email.toLowerCase() === targetEmail)
     if (idx === -1) return res.status(404).json({ ok: false, message: 'Subadmin not found' })
     const { salt, hash } = createPasswordRecord(password)
     users[idx] = { ...users[idx], salt, hash }
@@ -203,11 +204,11 @@ app.put('/api/admin/users/:username', requireAuth(['superadmin']), async (req, r
   }
 })
 
-app.delete('/api/admin/users/:username', requireAuth(['superadmin']), async (req, res) => {
-  const { username } = req.params
+app.delete('/api/admin/users/:email', requireAuth(['superadmin']), async (req, res) => {
+  const targetEmail = decodeURIComponent(req.params.email).toLowerCase()
   try {
     const users = await readUsers()
-    const next = users.filter((u) => u.username !== username)
+    const next = users.filter((u) => u.email.toLowerCase() !== targetEmail)
     if (next.length === users.length) {
       return res.status(404).json({ ok: false, message: 'Subadmin not found' })
     }
@@ -215,7 +216,7 @@ app.delete('/api/admin/users/:username', requireAuth(['superadmin']), async (req
 
     // Invalidate any active sessions for the deleted subadmin
     for (const [token, session] of sessions.entries()) {
-      if (session.role === 'subadmin' && session.username === username) {
+      if (session.role === 'subadmin' && session.email.toLowerCase() === targetEmail) {
         sessions.delete(token)
       }
     }

@@ -1,6 +1,6 @@
 const MESSAGES_KEY = 'ksl_messages'
 const SESSION_KEY = 'ksl_admin_session'
-const SUPERADMIN_USERNAME = 'superadmin'
+const SUPERADMIN_EMAIL = 'superadmin@gmail.com'
 
 function readSession() {
   if (typeof window === 'undefined') return null
@@ -33,7 +33,7 @@ export const lotteryUtils = {
   normalizePhone: (p) => String(p || '').replace(/[^0-9]/g, ''),
 
   // ---------- admin session ----------
-  // session shape: { token, username, role } where role is 'superadmin' | 'subadmin'
+  // session shape: { token, email, role } where role is 'superadmin' | 'subadmin'
   getAdminSession: () => readSession(),
 
   setAdminAuth: (session) => {
@@ -49,12 +49,12 @@ export const lotteryUtils = {
 
   isSuperAdmin: () => readSession()?.role === 'superadmin',
 
-  getAdminUsername: () => readSession()?.username || null,
+  getAdminEmail: () => readSession()?.email || null,
 
   authHeaders: () => {
     const session = readSession()
     return session?.token ? { Authorization: `Bearer ${session.token}` } : {}
   },
 
-  SUPERADMIN_USERNAME,
+  SUPERADMIN_EMAIL,
 }

@@ -34,6 +34,7 @@ function Alert({ type, children }) {
 
 const BASE_TABS = ['Add Winner', 'Make PDF', 'Ticket']
 const SUPERADMIN_TAB = 'Manage Subadmins'
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function Admin() {
   const navigate = useNavigate()
@@ -43,7 +44,7 @@ export function Admin() {
   const authed = !!session?.token
   const isSuperAdmin = session?.role === 'superadmin'
 
-  const [loginUsername, setLoginUsername] = useState('')
+  const [loginEmail, setLoginEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState(false)
   const [apiError, setApiError] = useState(false)
@@ -69,7 +70,7 @@ export function Admin() {
 
   // ---------- subadmin management ----------
   const [subUsers, setSubUsers] = useState([])
-  const [newSubUsername, setNewSubUsername] = useState('')
+  const [newSubEmail, setNewSubEmail] = useState('')
   const [newSubPassword, setNewSubPassword] = useState('')
   const [subError, setSubError] = useState('')
   const [subMessage, setSubMessage] = useState('')
@@ -109,14 +110,14 @@ export function Admin() {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: loginUsername, password }),
+        body: JSON.stringify({ email: loginEmail.trim().toLowerCase(), password }),
       })
       const data = await response.json()
       if (!response.ok || !data.ok) {
         setLoginError(true)
         return
       }
-      const newSession = { token: data.token, username: data.username, role: data.role }
+      const newSession = { token: data.token, email: data.email, role: data.role }
       lotteryUtils.setAdminAuth(newSession)
       setSession(newSession)
       setPassword('')
@@ -237,10 +238,14 @@ export function Admin() {
     e.preventDefault()
     setSubError('')
     setSubMessage('')
-    const u = newSubUsername.trim()
+    const email = newSubEmail.trim().toLowerCase()
     const p = newSubPassword
-    if (!u || !p || p.length < 6) {
-      setSubError('Username is required and password must be at least 6 characters.')
+    if (!email || !EMAIL_REGEX.test(email)) {
+      setSubError('Please enter a valid email address.')
+      return
+    }
+    if (!p || p.length < 6) {
+      setSubError('Password must be at least 6 characters.')
       return
     }
     setSubLoading(true)
@@ -248,7 +253,7 @@ export function Admin() {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
-        body: JSON.stringify({ username: u, password: p }),
+        body: JSON.stringify({ email, password: p }),
       })
       const data = await response.json()
       if (!response.ok || !data.ok) {
@@ -256,7 +261,7 @@ export function Admin() {
         return
       }
       setSubUsers(data.users || [])
-      setNewSubUsername('')
+      setNewSubEmail('')
       setNewSubPassword('')
       setSubMessage('Subadmin created successfully.')
     } catch (error) {
@@ -267,11 +272,11 @@ export function Admin() {
     }
   }
 
-  async function deleteSubUser(uname) {
+  async function deleteSubUser(email) {
     setSubError('')
     setSubMessage('')
     try {
-      const response = await fetch(`/api/admin/users/${encodeURIComponent(uname)}`, {
+      const response = await fetch(`/api/admin/users/${encodeURIComponent(email)}`, {
         method: 'DELETE',
         headers: lotteryUtils.authHeaders(),
       })
@@ -312,16 +317,17 @@ export function Admin() {
 
           <form onSubmit={doLogin} className="space-y-4" autoComplete="off">
             <div>
-              <label htmlFor="username" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-                Username
+              <label htmlFor="email" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                Email
               </label>
               <input
-                id="username"
-                type="text"
-                value={loginUsername}
-                onChange={(e) => setLoginUsername(e.target.value)}
-                placeholder="superadmin (or your subadmin username)"
+                id="email"
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@example.com"
                 className={inputClass}
+                required
               />
             </div>
 
@@ -339,7 +345,7 @@ export function Admin() {
               />
             </div>
 
-            {loginError && <Alert type="red">Incorrect username or password. Please try again.</Alert>}
+            {loginError && <Alert type="red">Incorrect email or password. Please try again.</Alert>}
             {apiError && <Alert type="yellow">Unable to reach the server. Please try again later.</Alert>}
 
             <button
@@ -374,7 +380,7 @@ export function Admin() {
                 {TABS[activeTab] || 'Add Winner'}
               </h1>
               <p className="text-xs text-gray-500 mt-0.5">
-                Signed in as <span className="font-mono font-semibold">{session.username}</span>{' '}
+                Signed in as <span className="font-mono font-semibold">{session.email}</span>{' '}
                 <span className={`ml-1 inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${isSuperAdmin ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
                   {isSuperAdmin ? 'Superadmin' : 'Subadmin'}
                 </span>
@@ -591,15 +597,15 @@ export function Admin() {
           <div className="space-y-6">
             <form onSubmit={createSubUser} className="space-y-4" autoComplete="off">
               <div>
-                <label htmlFor="subUsername" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
-                  Subadmin Username
+                <label htmlFor="subEmail" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Subadmin Email
                 </label>
                 <input
-                  id="subUsername"
-                  type="text"
-                  value={newSubUsername}
-                  onChange={(e) => setNewSubUsername(e.target.value)}
-                  placeholder="e.g. district-officer"
+                  id="subEmail"
+                  type="email"
+                  value={newSubEmail}
+                  onChange={(e) => setNewSubEmail(e.target.value)}
+                  placeholder="officer@example.com"
                   className={inputClass}
                   required
                 />
@@ -640,22 +646,22 @@ export function Admin() {
                 <table className="min-w-full divide-y divide-amber-200 text-sm">
                   <thead className="bg-amber-100 text-left text-xs uppercase tracking-wide text-amber-700">
                     <tr>
-                      <th className="px-3 py-3">Username</th>
+                      <th className="px-3 py-3">Email</th>
                       <th className="px-3 py-3">Created</th>
                       <th className="px-3 py-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-amber-200">
                     {subUsers.map((u) => (
-                      <tr key={u.username} className="bg-white">
-                        <td className="px-3 py-3 font-mono text-slate-700">{u.username}</td>
+                      <tr key={u.email} className="bg-white">
+                        <td className="px-3 py-3 font-mono text-slate-700">{u.email}</td>
                         <td className="px-3 py-3 text-slate-500">
                           {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
                         </td>
                         <td className="px-3 py-3">
                           <button
                             type="button"
-                            onClick={() => deleteSubUser(u.username)}
+                            onClick={() => deleteSubUser(u.email)}
                             className="rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
                           >
                             Delete
