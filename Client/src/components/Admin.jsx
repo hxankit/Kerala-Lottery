@@ -32,27 +32,48 @@ function Alert({ type, children }) {
   )
 }
 
-const TABS = ['Add Winner', 'Make PDF', 'Ticket']
+const BASE_TABS = ['Add Winner', 'Make PDF', 'Ticket']
+const SUPERADMIN_TAB = 'Manage Subadmins'
 
 export function Admin() {
   const navigate = useNavigate()
-  const [authed, setAuthed] = useState(lotteryUtils.isAdmin())
+
+  // ---------- auth/session ----------
+  const [session, setSession] = useState(lotteryUtils.getAdminSession())
+  const authed = !!session?.token
+  const isSuperAdmin = session?.role === 'superadmin'
+
+  const [loginUsername, setLoginUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState(false)
   const [apiError, setApiError] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  // ---------- tabs ----------
+  const TABS = isSuperAdmin ? [...BASE_TABS, SUPERADMIN_TAB] : BASE_TABS
   const [activeTab, setActiveTab] = useState(0)
+
+  // ---------- winners: add form ----------
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [ticketNumber, setTicketNumber] = useState('')
   const [winnerError, setWinnerError] = useState(false)
   const [winners, setWinners] = useState([])
+
+  // ---------- winners: edit form ----------
   const [editingIndex, setEditingIndex] = useState(null)
   const [editName, setEditName] = useState('')
   const [editPhone, setEditPhone] = useState('')
   const [editTicketNumber, setEditTicketNumber] = useState('')
   const [editPosition, setEditPosition] = useState('5Th')
+
+  // ---------- subadmin management ----------
+  const [subUsers, setSubUsers] = useState([])
+  const [newSubUsername, setNewSubUsername] = useState('')
+  const [newSubPassword, setNewSubPassword] = useState('')
+  const [subError, setSubError] = useState('')
+  const [subMessage, setSubMessage] = useState('')
+  const [subLoading, setSubLoading] = useState(false)
 
   useEffect(() => {
     async function loadWinners() {
@@ -68,6 +89,17 @@ export function Admin() {
     loadWinners()
   }, [])
 
+  useEffect(() => {
+    if (!authed) return
+    if (activeTab >= TABS.length) setActiveTab(0)
+  }, [authed, TABS.length, activeTab])
+
+  useEffect(() => {
+    if (isSuperAdmin) loadSubUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuperAdmin])
+
+  // ---------- auth actions ----------
   async function doLogin(e) {
     e.preventDefault()
     setLoading(true)
@@ -77,17 +109,18 @@ export function Admin() {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username: loginUsername, password }),
       })
-      if (!response.ok) { setLoginError(true); return }
       const data = await response.json()
-      if (data.ok) {
-        lotteryUtils.setAdminAuth(true)
-        setAuthed(true)
-        setPassword('')
-      } else {
+      if (!response.ok || !data.ok) {
         setLoginError(true)
+        return
       }
+      const newSession = { token: data.token, username: data.username, role: data.role }
+      lotteryUtils.setAdminAuth(newSession)
+      setSession(newSession)
+      setPassword('')
+      setActiveTab(0)
     } catch (error) {
       console.error(error)
       setApiError(true)
@@ -97,10 +130,15 @@ export function Admin() {
   }
 
   function doLogout() {
-    lotteryUtils.setAdminAuth(false)
-    setAuthed(false)
+    fetch('/api/admin/logout', {
+      method: 'POST',
+      headers: lotteryUtils.authHeaders(),
+    }).catch(() => {})
+    lotteryUtils.setAdminAuth(null)
+    setSession(null)
   }
 
+  // ---------- winner actions ----------
   async function addWinner(e) {
     e.preventDefault()
     const n = name.trim(), p = phone.trim(), ticket = ticketNumber.trim()
@@ -110,7 +148,7 @@ export function Admin() {
     try {
       const response = await fetch('/api/winners', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
         body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position: '5Th' }),
       })
       if (!response.ok) { setApiError(true); return }
@@ -153,7 +191,7 @@ export function Admin() {
     try {
       const response = await fetch(`/api/winners/${index}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
         body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position }),
       })
       if (!response.ok) { setApiError(true); return }
@@ -171,6 +209,7 @@ export function Admin() {
     try {
       const response = await fetch(`/api/winners/${index}`, {
         method: 'DELETE',
+        headers: lotteryUtils.authHeaders(),
       })
       if (!response.ok) { setApiError(true); return }
       const data = await response.json()
@@ -182,29 +221,110 @@ export function Admin() {
     }
   }
 
+  // ---------- subadmin actions ----------
+  async function loadSubUsers() {
+    try {
+      const response = await fetch('/api/admin/users', { headers: lotteryUtils.authHeaders() })
+      if (!response.ok) return
+      const data = await response.json()
+      setSubUsers(data.users || [])
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function createSubUser(e) {
+    e.preventDefault()
+    setSubError('')
+    setSubMessage('')
+    const u = newSubUsername.trim()
+    const p = newSubPassword
+    if (!u || !p || p.length < 6) {
+      setSubError('Username is required and password must be at least 6 characters.')
+      return
+    }
+    setSubLoading(true)
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
+        body: JSON.stringify({ username: u, password: p }),
+      })
+      const data = await response.json()
+      if (!response.ok || !data.ok) {
+        setSubError(data.message || 'Unable to create subadmin.')
+        return
+      }
+      setSubUsers(data.users || [])
+      setNewSubUsername('')
+      setNewSubPassword('')
+      setSubMessage('Subadmin created successfully.')
+    } catch (error) {
+      console.error(error)
+      setSubError('Unable to reach the server.')
+    } finally {
+      setSubLoading(false)
+    }
+  }
+
+  async function deleteSubUser(uname) {
+    setSubError('')
+    setSubMessage('')
+    try {
+      const response = await fetch(`/api/admin/users/${encodeURIComponent(uname)}`, {
+        method: 'DELETE',
+        headers: lotteryUtils.authHeaders(),
+      })
+      const data = await response.json()
+      if (!response.ok || !data.ok) {
+        setSubError(data.message || 'Unable to delete subadmin.')
+        return
+      }
+      setSubUsers(data.users || [])
+      setSubMessage('Subadmin removed.')
+    } catch (error) {
+      console.error(error)
+      setSubError('Unable to reach the server.')
+    }
+  }
+
   const inputClass =
     'w-full px-4 py-3 border-2 border-amber-600 rounded-lg bg-white text-sm font-medium text-gray-900 focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-600/20 transition'
 
+  // ---------- login screen ----------
   if (!authed) {
     return (
       <div className="max-w-full lg:max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <HeaderBanner label="Admin Portal · Kerala State Lotteries" />
 
         <div className="bg-[#fffaf0] border-2 border-amber-400/40 border-t-0 rounded-b-2xl shadow-lg p-8 space-y-5">
-          {/* Title */}
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-amber-600 flex items-center justify-center shadow text-white text-lg flex-shrink-0">
               🔒
             </div>
             <div>
               <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">Admin Login</h1>
-              <p className="text-xs text-gray-500 mt-0.5">Enter your password to manage lottery winners.</p>
+              <p className="text-xs text-gray-500 mt-0.5">Enter your credentials to manage lottery winners.</p>
             </div>
           </div>
 
           <hr className="border-amber-300/40" />
 
           <form onSubmit={doLogin} className="space-y-4" autoComplete="off">
+            <div>
+              <label htmlFor="username" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={loginUsername}
+                onChange={(e) => setLoginUsername(e.target.value)}
+                placeholder="superadmin (or your subadmin username)"
+                className={inputClass}
+              />
+            </div>
+
             <div>
               <label htmlFor="password" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
                 Password
@@ -219,7 +339,7 @@ export function Admin() {
               />
             </div>
 
-            {loginError && <Alert type="red">Incorrect password. Please try again.</Alert>}
+            {loginError && <Alert type="red">Incorrect username or password. Please try again.</Alert>}
             {apiError && <Alert type="yellow">Unable to reach the server. Please try again later.</Alert>}
 
             <button
@@ -237,6 +357,7 @@ export function Admin() {
     )
   }
 
+  // ---------- authenticated dashboard ----------
   return (
     <div className="max-w-full lg:max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <HeaderBanner label="Admin Portal · Kerala State Lotteries" />
@@ -245,20 +366,23 @@ export function Admin() {
         {/* Title row */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-green-700 flex items-center justify-center shadow text-white text-lg flex-shrink-0">
-              🏆
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center shadow text-white text-lg flex-shrink-0 ${isSuperAdmin ? 'bg-purple-700' : 'bg-green-700'}`}>
+              {isSuperAdmin ? '👑' : '🏆'}
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">Add Winner</h1>
-              <p className="text-xs text-gray-500 mt-0.5">Authenticated as administrator</p>
+              <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">
+                {TABS[activeTab] || 'Add Winner'}
+              </h1>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Signed in as <span className="font-mono font-semibold">{session.username}</span>{' '}
+                <span className={`ml-1 inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${isSuperAdmin ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
+                  {isSuperAdmin ? 'Superadmin' : 'Subadmin'}
+                </span>
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0 pt-1">
-            {/* <span className="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-600" />
-              {winners.length} saved
-            </span> */}
             <button
               onClick={doLogout}
               className="text-xs font-bold text-amber-700 border border-amber-500 px-3 py-1 rounded-md hover:bg-amber-100 transition"
@@ -271,7 +395,7 @@ export function Admin() {
         <hr className="border-amber-300/40" />
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b-2 border-amber-200">
+        <div className="flex gap-1 border-b-2 border-amber-200 flex-wrap">
           {TABS.map((tab, i) => (
             <button
               key={tab}
@@ -287,7 +411,7 @@ export function Admin() {
           ))}
         </div>
 
-        {/* Add Winner form */}
+        {/* Add Winner tab */}
         {activeTab === 0 && (
           <>
             <form onSubmit={addWinner} className="space-y-4" autoComplete="off">
@@ -461,6 +585,90 @@ export function Admin() {
 
         {/* Ticket tab */}
         {activeTab === 2 && <TicketGenerator />}
+
+        {/* Manage Subadmins tab (superadmin only) */}
+        {isSuperAdmin && activeTab === TABS.indexOf(SUPERADMIN_TAB) && (
+          <div className="space-y-6">
+            <form onSubmit={createSubUser} className="space-y-4" autoComplete="off">
+              <div>
+                <label htmlFor="subUsername" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Subadmin Username
+                </label>
+                <input
+                  id="subUsername"
+                  type="text"
+                  value={newSubUsername}
+                  onChange={(e) => setNewSubUsername(e.target.value)}
+                  placeholder="e.g. district-officer"
+                  className={inputClass}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="subPassword" className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1.5">
+                  Password
+                </label>
+                <input
+                  id="subPassword"
+                  type="password"
+                  value={newSubPassword}
+                  onChange={(e) => setNewSubPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                  className={inputClass}
+                  required
+                />
+              </div>
+
+              {subError && <Alert type="red">{subError}</Alert>}
+              {subMessage && <Alert type="yellow">{subMessage}</Alert>}
+
+              <button
+                type="submit"
+                disabled={subLoading}
+                className="w-full bg-purple-700 hover:bg-purple-800 disabled:bg-purple-300 active:scale-[0.98] text-white font-extrabold py-3 rounded-lg shadow transition-all duration-150"
+              >
+                {subLoading ? 'Creating…' : '➕ Create Subadmin'}
+              </button>
+            </form>
+
+            <div className="rounded-3xl border border-amber-200 bg-white p-4 shadow-sm">
+              <h2 className="mb-4 text-lg font-bold text-gray-900">Subadmins</h2>
+              {subUsers.length === 0 ? (
+                <p className="text-sm text-gray-500">No subadmins yet. Create one above.</p>
+              ) : (
+                <table className="min-w-full divide-y divide-amber-200 text-sm">
+                  <thead className="bg-amber-100 text-left text-xs uppercase tracking-wide text-amber-700">
+                    <tr>
+                      <th className="px-3 py-3">Username</th>
+                      <th className="px-3 py-3">Created</th>
+                      <th className="px-3 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-amber-200">
+                    {subUsers.map((u) => (
+                      <tr key={u.username} className="bg-white">
+                        <td className="px-3 py-3 font-mono text-slate-700">{u.username}</td>
+                        <td className="px-3 py-3 text-slate-500">
+                          {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
+                        </td>
+                        <td className="px-3 py-3">
+                          <button
+                            type="button"
+                            onClick={() => deleteSubUser(u.username)}
+                            className="rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
 
         <p className="text-xs text-gray-400 text-center pt-1">
           All changes are saved to the backend and reflected on the Winners page.
