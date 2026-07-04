@@ -32,9 +32,90 @@ function Alert({ type, children }) {
   )
 }
 
+// ---------- confirmation dialog ----------
+function ConfirmDialog({ title, message, confirmLabel = 'Confirm', danger = false, onConfirm, onCancel }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-dialog-title"
+    >
+      <div className="w-full max-w-sm rounded-2xl border-2 border-amber-400/50 bg-[#fffaf0] shadow-xl overflow-hidden">
+        <div className="flex items-center gap-2.5 bg-gradient-to-r from-[#f5d96b] via-[#ffe98a] to-[#f5d96b] border-b-[3px] border-amber-600 px-4 py-2">
+          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${danger ? 'bg-red-600' : 'bg-amber-500'}`} />
+          <span id="confirm-dialog-title" className="text-xs font-extrabold text-amber-900 uppercase tracking-wider">
+            {title}
+          </span>
+        </div>
+        <div className="p-6 space-y-5">
+          <p className="text-sm font-medium text-gray-800">{message}</p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 rounded-lg border border-amber-400 bg-white py-2.5 text-sm font-bold text-gray-700 hover:bg-amber-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              autoFocus
+              className={`flex-1 rounded-lg py-2.5 text-sm font-extrabold text-white shadow transition active:scale-[0.98] ${
+                danger ? 'bg-red-600 hover:bg-red-700' : 'bg-amber-600 hover:bg-amber-700'
+              }`}
+            >
+              {confirmLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const BASE_TABS = ['Add Winner', 'Make PDF', 'Ticket']
 const SUPERADMIN_TAB = 'Manage Subadmins'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_REGEX = /^[+]?[0-9]{7,15}$/
+const TICKET_REGEX = /^[A-Za-z0-9](?:[A-Za-z0-9\s-]{1,18})[A-Za-z0-9]$/
+
+// ---------- validation helpers ----------
+function validateName(value) {
+  const v = value.trim()
+  if (!v) return 'Name is required.'
+  if (v.length < 2) return 'Name must be at least 2 characters.'
+  if (v.length > 80) return 'Name is too long.'
+  return ''
+}
+
+function validatePhone(value) {
+  const v = value.trim()
+  if (!v) return 'Phone number is required.'
+  const digitsOnly = v.replace(/[\s-]/g, '')
+  if (!PHONE_REGEX.test(digitsOnly)) return 'Enter a valid phone number (7–15 digits, optional +).'
+  return ''
+}
+
+function validateTicket(value) {
+  const v = value.trim()
+  if (!v) return 'Ticket number is required.'
+  if (!TICKET_REGEX.test(v)) return 'Ticket number looks invalid (letters/numbers, 3–20 characters).'
+  return ''
+}
+
+function validateEmail(value) {
+  const v = value.trim().toLowerCase()
+  if (!v) return 'Email is required.'
+  if (!EMAIL_REGEX.test(v)) return 'Please enter a valid email address.'
+  return ''
+}
+
+function validateSubPassword(value) {
+  if (!value || value.length < 6) return 'Password must be at least 6 characters.'
+  return ''
+}
 
 export function Admin() {
   const navigate = useNavigate()
@@ -47,6 +128,7 @@ export function Admin() {
   const [loginEmail, setLoginEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState(false)
+  const [loginValidationError, setLoginValidationError] = useState('')
   const [apiError, setApiError] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -58,7 +140,7 @@ export function Admin() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [ticketNumber, setTicketNumber] = useState('')
-  const [winnerError, setWinnerError] = useState(false)
+  const [winnerError, setWinnerError] = useState('')
   const [winners, setWinners] = useState([])
 
   // ---------- winners: edit form ----------
@@ -67,6 +149,7 @@ export function Admin() {
   const [editPhone, setEditPhone] = useState('')
   const [editTicketNumber, setEditTicketNumber] = useState('')
   const [editPosition, setEditPosition] = useState('5Th')
+  const [editError, setEditError] = useState('')
 
   // ---------- subadmin management ----------
   const [subUsers, setSubUsers] = useState([])
@@ -75,6 +158,23 @@ export function Admin() {
   const [subError, setSubError] = useState('')
   const [subMessage, setSubMessage] = useState('')
   const [subLoading, setSubLoading] = useState(false)
+
+  // ---------- confirmation dialog ----------
+  const [confirmState, setConfirmState] = useState(null) // { title, message, confirmLabel, danger, onConfirm }
+
+  function requestConfirm({ title, message, confirmLabel, danger, onConfirm }) {
+    setConfirmState({ title, message, confirmLabel, danger, onConfirm })
+  }
+
+  function closeConfirm() {
+    setConfirmState(null)
+  }
+
+  function runConfirmedAction() {
+    const action = confirmState?.onConfirm
+    closeConfirm()
+    if (typeof action === 'function') action()
+  }
 
   useEffect(() => {
     async function loadWinners() {
@@ -103,9 +203,21 @@ export function Admin() {
   // ---------- auth actions ----------
   async function doLogin(e) {
     e.preventDefault()
-    setLoading(true)
     setLoginError(false)
     setApiError(false)
+    setLoginValidationError('')
+
+    const emailErr = validateEmail(loginEmail)
+    if (emailErr) {
+      setLoginValidationError(emailErr)
+      return
+    }
+    if (!password) {
+      setLoginValidationError('Password is required.')
+      return
+    }
+
+    setLoading(true)
     try {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
@@ -131,37 +243,62 @@ export function Admin() {
   }
 
   function doLogout() {
-    fetch('/api/admin/logout', {
-      method: 'POST',
-      headers: lotteryUtils.authHeaders(),
-    }).catch(() => {})
-    lotteryUtils.setAdminAuth(null)
-    setSession(null)
+    requestConfirm({
+      title: 'Log Out',
+      message: 'Are you sure you want to log out of the admin portal?',
+      confirmLabel: 'Log Out',
+      danger: false,
+      onConfirm: () => {
+        fetch('/api/admin/logout', {
+          method: 'POST',
+          headers: lotteryUtils.authHeaders(),
+        }).catch(() => {})
+        lotteryUtils.setAdminAuth(null)
+        setSession(null)
+      },
+    })
   }
 
   // ---------- winner actions ----------
   async function addWinner(e) {
     e.preventDefault()
     const n = name.trim(), p = phone.trim(), ticket = ticketNumber.trim()
-    if (!n || !p || !ticket) { setWinnerError(true); return }
-    setWinnerError(false)
-    setApiError(false)
-    try {
-      const response = await fetch('/api/winners', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
-        body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position: '5Th' }),
-      })
-      if (!response.ok) { setApiError(true); return }
-      const data = await response.json()
-      setWinners(data.winners || [])
-      setName(''); setPhone(''); setTicketNumber('')
-      cancelEdit()
-      // navigate('/winners')
-    } catch (error) {
-      console.error(error)
-      setApiError(true)
+
+    const nameErr = validateName(n)
+    const phoneErr = validatePhone(p)
+    const ticketErr = validateTicket(ticket)
+    const firstError = nameErr || phoneErr || ticketErr
+    if (firstError) {
+      setWinnerError(firstError)
+      return
     }
+    setWinnerError('')
+    setApiError(false)
+
+    requestConfirm({
+      title: 'Add Winner',
+      message: `Add "${n}" as a winner with ticket ${ticket}?`,
+      confirmLabel: 'Add Winner',
+      danger: false,
+      onConfirm: async () => {
+        try {
+          const response = await fetch('/api/winners', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
+            body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position: '5Th' }),
+          })
+          if (!response.ok) { setApiError(true); return }
+          const data = await response.json()
+          setWinners(data.winners || [])
+          setName(''); setPhone(''); setTicketNumber('')
+          cancelEdit()
+          // navigate('/winners')
+        } catch (error) {
+          console.error(error)
+          setApiError(true)
+        }
+      },
+    })
   }
 
   function startEdit(index) {
@@ -172,7 +309,8 @@ export function Admin() {
     setEditPhone(winner.phone || '')
     setEditTicketNumber(winner.ticketNumber || '')
     setEditPosition(winner.position || '5Th')
-    setWinnerError(false)
+    setEditError('')
+    setWinnerError('')
     setApiError(false)
   }
 
@@ -182,44 +320,71 @@ export function Admin() {
     setEditPhone('')
     setEditTicketNumber('')
     setEditPosition('5Th')
+    setEditError('')
   }
 
   async function updateWinner(index) {
     const n = editName.trim(), p = editPhone.trim(), ticket = editTicketNumber.trim(), position = editPosition.trim() || '5Th'
-    if (!n || !p || !ticket) { setWinnerError(true); return }
-    setWinnerError(false)
-    setApiError(false)
-    try {
-      const response = await fetch(`/api/winners/${index}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
-        body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position }),
-      })
-      if (!response.ok) { setApiError(true); return }
-      const data = await response.json()
-      setWinners(data.winners || [])
-      cancelEdit()
-    } catch (error) {
-      console.error(error)
-      setApiError(true)
+
+    const nameErr = validateName(n)
+    const phoneErr = validatePhone(p)
+    const ticketErr = validateTicket(ticket)
+    const firstError = nameErr || phoneErr || ticketErr
+    if (firstError) {
+      setEditError(firstError)
+      return
     }
+    setEditError('')
+    setApiError(false)
+
+    requestConfirm({
+      title: 'Save Changes',
+      message: `Save changes to "${n}" (ticket ${ticket})?`,
+      confirmLabel: 'Save Changes',
+      danger: false,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/winners/${index}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
+            body: JSON.stringify({ name: n, phone: p, ticketNumber: ticket, position }),
+          })
+          if (!response.ok) { setApiError(true); return }
+          const data = await response.json()
+          setWinners(data.winners || [])
+          cancelEdit()
+        } catch (error) {
+          console.error(error)
+          setApiError(true)
+        }
+      },
+    })
   }
 
-  async function deleteWinner(index) {
+  function deleteWinner(index) {
+    const winner = winners[index]
     setApiError(false)
-    try {
-      const response = await fetch(`/api/winners/${index}`, {
-        method: 'DELETE',
-        headers: lotteryUtils.authHeaders(),
-      })
-      if (!response.ok) { setApiError(true); return }
-      const data = await response.json()
-      setWinners(data.winners || [])
-      if (editingIndex === index) cancelEdit()
-    } catch (error) {
-      console.error(error)
-      setApiError(true)
-    }
+    requestConfirm({
+      title: 'Delete Winner',
+      message: `Delete winner "${winner?.name || 'this entry'}" (ticket ${winner?.ticketNumber || '—'})? This cannot be undone.`,
+      confirmLabel: 'Delete',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/winners/${index}`, {
+            method: 'DELETE',
+            headers: lotteryUtils.authHeaders(),
+          })
+          if (!response.ok) { setApiError(true); return }
+          const data = await response.json()
+          setWinners(data.winners || [])
+          if (editingIndex === index) cancelEdit()
+        } catch (error) {
+          console.error(error)
+          setApiError(true)
+        }
+      },
+    })
   }
 
   // ---------- subadmin actions ----------
@@ -234,63 +399,87 @@ export function Admin() {
     }
   }
 
-  async function createSubUser(e) {
+  function createSubUser(e) {
     e.preventDefault()
     setSubError('')
     setSubMessage('')
     const email = newSubEmail.trim().toLowerCase()
     const p = newSubPassword
-    if (!email || !EMAIL_REGEX.test(email)) {
-      setSubError('Please enter a valid email address.')
+
+    const emailErr = validateEmail(email)
+    if (emailErr) {
+      setSubError(emailErr)
       return
     }
-    if (!p || p.length < 6) {
-      setSubError('Password must be at least 6 characters.')
+    const passErr = validateSubPassword(p)
+    if (passErr) {
+      setSubError(passErr)
       return
     }
-    setSubLoading(true)
-    try {
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
-        body: JSON.stringify({ email, password: p }),
-      })
-      const data = await response.json()
-      if (!response.ok || !data.ok) {
-        setSubError(data.message || 'Unable to create subadmin.')
-        return
-      }
-      setSubUsers(data.users || [])
-      setNewSubEmail('')
-      setNewSubPassword('')
-      setSubMessage('Subadmin created successfully.')
-    } catch (error) {
-      console.error(error)
-      setSubError('Unable to reach the server.')
-    } finally {
-      setSubLoading(false)
+    if (subUsers.some((u) => u.email?.toLowerCase() === email)) {
+      setSubError('A subadmin with this email already exists.')
+      return
     }
+
+    requestConfirm({
+      title: 'Create Subadmin',
+      message: `Create a new subadmin account for "${email}"?`,
+      confirmLabel: 'Create',
+      danger: false,
+      onConfirm: async () => {
+        setSubLoading(true)
+        try {
+          const response = await fetch('/api/admin/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...lotteryUtils.authHeaders() },
+            body: JSON.stringify({ email, password: p }),
+          })
+          const data = await response.json()
+          if (!response.ok || !data.ok) {
+            setSubError(data.message || 'Unable to create subadmin.')
+            return
+          }
+          setSubUsers(data.users || [])
+          setNewSubEmail('')
+          setNewSubPassword('')
+          setSubMessage('Subadmin created successfully.')
+        } catch (error) {
+          console.error(error)
+          setSubError('Unable to reach the server.')
+        } finally {
+          setSubLoading(false)
+        }
+      },
+    })
   }
 
-  async function deleteSubUser(email) {
+  function deleteSubUser(email) {
     setSubError('')
     setSubMessage('')
-    try {
-      const response = await fetch(`/api/admin/users/${encodeURIComponent(email)}`, {
-        method: 'DELETE',
-        headers: lotteryUtils.authHeaders(),
-      })
-      const data = await response.json()
-      if (!response.ok || !data.ok) {
-        setSubError(data.message || 'Unable to delete subadmin.')
-        return
-      }
-      setSubUsers(data.users || [])
-      setSubMessage('Subadmin removed.')
-    } catch (error) {
-      console.error(error)
-      setSubError('Unable to reach the server.')
-    }
+    requestConfirm({
+      title: 'Remove Subadmin',
+      message: `Remove subadmin access for "${email}"? This cannot be undone.`,
+      confirmLabel: 'Remove',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/admin/users/${encodeURIComponent(email)}`, {
+            method: 'DELETE',
+            headers: lotteryUtils.authHeaders(),
+          })
+          const data = await response.json()
+          if (!response.ok || !data.ok) {
+            setSubError(data.message || 'Unable to delete subadmin.')
+            return
+          }
+          setSubUsers(data.users || [])
+          setSubMessage('Subadmin removed.')
+        } catch (error) {
+          console.error(error)
+          setSubError('Unable to reach the server.')
+        }
+      },
+    })
   }
 
   const inputClass =
@@ -345,6 +534,7 @@ export function Admin() {
               />
             </div>
 
+            {loginValidationError && <Alert type="red">{loginValidationError}</Alert>}
             {loginError && <Alert type="red">Incorrect email or password. Please try again.</Alert>}
             {apiError && <Alert type="yellow">Unable to reach the server. Please try again later.</Alert>}
 
@@ -466,7 +656,7 @@ export function Admin() {
                 />
               </div>
 
-              {winnerError && <Alert type="red">Please fill in name, phone number, and ticket number.</Alert>}
+              {winnerError && <Alert type="red">{winnerError}</Alert>}
               {apiError && <Alert type="yellow">Unable to save winner. Please try again.</Alert>}
 
               <button
@@ -480,6 +670,11 @@ export function Admin() {
             {winners.length > 0 && (
               <div className="mt-10 overflow-x-auto rounded-3xl border border-amber-200 bg-white p-4 shadow-sm">
                 <h2 className="mb-4 text-lg font-bold text-gray-900">Winner Management</h2>
+                {editingIndex !== null && editError && (
+                  <div className="mb-4">
+                    <Alert type="red">{editError}</Alert>
+                  </div>
+                )}
                 <table className="min-w-full divide-y divide-amber-200 text-sm">
                   <thead className="bg-amber-100 text-left text-xs uppercase tracking-wide text-amber-700">
                     <tr>
@@ -583,7 +778,20 @@ export function Admin() {
         {activeTab === 1 && (
           <div className="text-center py-8 space-y-3">
             <p className="text-sm text-gray-500">Generate a printable PDF for the current draw results.</p>
-            <button className="bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-extrabold py-3 px-8 rounded-lg shadow transition-all duration-150">
+            <button
+              onClick={() =>
+                requestConfirm({
+                  title: 'Generate PDF',
+                  message: 'Generate a printable PDF for the current draw results?',
+                  confirmLabel: 'Generate',
+                  danger: false,
+                  onConfirm: () => {
+                    // PDF generation logic goes here
+                  },
+                })
+              }
+              className="bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-extrabold py-3 px-8 rounded-lg shadow transition-all duration-150"
+            >
               📄 &nbsp;Make PDF
             </button>
           </div>
@@ -680,6 +888,17 @@ export function Admin() {
           All changes are saved to the backend and reflected on the Winners page.
         </p>
       </div>
+
+      {confirmState && (
+        <ConfirmDialog
+          title={confirmState.title}
+          message={confirmState.message}
+          confirmLabel={confirmState.confirmLabel}
+          danger={confirmState.danger}
+          onConfirm={runConfirmedAction}
+          onCancel={closeConfirm}
+        />
+      )}
     </div>
   )
 }
