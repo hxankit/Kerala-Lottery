@@ -6,8 +6,8 @@ const crypto = require('crypto')
 
 const app = express()
 const PORT = process.env.PORT || 4000
-const ADMIN_PASSWORD = 'DevxExpanzia'
-const SUPERADMIN_EMAIL = 'superadmin@gmail.com'
+const ADMIN_PASSWORD = 'srisakthilottry@4527'
+const SUPERADMIN_EMAIL = 'superadmin@srisakthilottry.shop'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const WINNERS_PATH = path.join(__dirname, 'winners.json')
 const USERS_PATH = path.join(__dirname, 'users.json')
