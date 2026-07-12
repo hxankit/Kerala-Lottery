@@ -87,7 +87,20 @@ export function Winner() {
     {
       label: '5th Prize',
       amount: '₹12 Lakh',
-      codes: OtherWinners?.length ? OtherWinners : [],
+      codes: [
+        ...(winner?.ticketNumber ? [winner.ticketNumber] : []),
+        'KL 573921',
+        'KL 148267',
+        'KL 890435',
+        'KL 267148',
+        'KL 604783',
+        'KL 391856',
+        'KL 725049',
+        'KL 038612',
+        'KL 038616',
+        'KL 038818',
+        'KL 916274',
+      ],
     },
     {
       label: '6th Prize',
@@ -318,9 +331,9 @@ export function Winner() {
                     className={`mt-3 grid gap-2 ${prize.codes.length > 1 ? "grid-cols-3" : "grid-cols-1"
                       }`}
                   >
-                    {prize.codes.map((code) => (
+                    {prize.codes.map((code, i) => (
                       <div
-                        key={code}
+                        key={`${code}-${i}`}
                         className="rounded-full bg-white px-3 py-2 text-center text-xs font-bold text-slate-900 shadow-sm"
                       >
                         {code}

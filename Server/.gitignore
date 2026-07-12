@@ -1,1 +1,8 @@
-node_modules
+node_modules/
+.env
+*.json.key
+scsdata-*.json
+service-account*.json
+dist/
+.DS_Store
+scsdata-465914-bc172c010175.json

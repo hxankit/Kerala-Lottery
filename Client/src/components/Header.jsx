@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X,Lock } from 'lucide-react'
 
 const navItems = [
   { href: '/', label: 'Home', key: 'home' },
@@ -8,7 +8,7 @@ const navItems = [
   // { href: '/winners', label: 'Winners', key: 'winners' },
   { href: '/help', label: 'Help Center', key: 'help' },
   { href: '/contact', label: 'Contact Us', key: 'contact' },
-  // { href: '/admin', label: 'Admin Portal', key: 'admin' },
+  { href: '/admin', label: '', key: 'admin' },
 ]
 
 const tickerMessages = [
@@ -93,8 +93,9 @@ export function Header() {
               <Link
                 key={item.key}
                 to={item.href}
-                className="px-4 py-2 rounded-md text-ink hover:bg-white/50 hover:shadow-sm transition text-sm font-semibold"
+                className="px-4 py-2 rounded-md text-ink hover:bg-white/50 hover:shadow-sm transition text-sm font-semibold flex items-center gap-1.5"
               >
+                {item.key === 'admin' && <Lock className="w-3.5 h-3.5" />}
                 {item.label}
               </Link>
             ))}
@@ -105,7 +106,7 @@ export function Header() {
           <>
             <div className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30" onClick={() => setIsOpen(false)} />
             <aside className="fixed left-0 top-0 h-full w-full sm:max-w-xs bg-gradient-to-b from-[#f5d96b] to-[#ffe98a] shadow-2xl lg:hidden z-40 pt-16 border-r-4 border-orange overflow-y-auto">
-              
+
               <div className="p-4 space-y-2">
                 {navItems.map((item) => (
                   <Link

@@ -1,51 +1,34 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const fs = require('fs/promises')
 const path = require('path')
 const crypto = require('crypto')
 
+const {
+  readWinners,
+  addWinner,
+  updateWinner,
+  deleteWinner,
+  readUsers,
+  addUser,
+  updateUserPassword,
+  deleteUser,
+} = require('./googleSheets')
+
 const app = express()
 const PORT = process.env.PORT || 4000
-const ADMIN_PASSWORD = 'srisakthilottry@4527'
-const SUPERADMIN_EMAIL = 'superadmin@srisakthilottry.shop'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+const SUPERADMIN_EMAIL = process.env.SUPERADMIN_EMAIL
+
+if (!ADMIN_PASSWORD || !SUPERADMIN_EMAIL) {
+  throw new Error('ADMIN_PASSWORD or SUPERADMIN_EMAIL is not set. Check your .env file.')
+}
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const WINNERS_PATH = path.join(__dirname, 'winners.json')
-const USERS_PATH = path.join(__dirname, 'users.json')
 const CLIENT_BUILD_PATH = path.join(__dirname, '../Client/dist')
 
 app.use(cors())
 app.use(express.json())
 app.use(express.static(CLIENT_BUILD_PATH))
-
-// ---------- winners persistence ----------
-async function readWinners() {
-  try {
-    const data = await fs.readFile(WINNERS_PATH, 'utf8')
-    return JSON.parse(data || '[]')
-  } catch (error) {
-    if (error.code === 'ENOENT') return []
-    throw error
-  }
-}
-
-async function writeWinners(winners) {
-  await fs.writeFile(WINNERS_PATH, JSON.stringify(winners, null, 2), 'utf8')
-}
-
-// ---------- subadmin user persistence ----------
-async function readUsers() {
-  try {
-    const data = await fs.readFile(USERS_PATH, 'utf8')
-    return JSON.parse(data || '[]')
-  } catch (error) {
-    if (error.code === 'ENOENT') return []
-    throw error
-  }
-}
-
-async function writeUsers(users) {
-  await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2), 'utf8')
-}
 
 function publicUser({ email, createdAt, createdBy }) {
   return { email, createdAt, createdBy }
@@ -164,19 +147,18 @@ app.post('/api/admin/users', requireAuth(['superadmin']), async (req, res) => {
     return res.status(400).json({ ok: false, message: 'That email is reserved' })
   }
   try {
-    const users = await readUsers()
-    if (users.some((u) => u.email.toLowerCase() === mail)) {
+    const existingUsers = await readUsers()
+    if (existingUsers.some((u) => u.email.toLowerCase() === mail)) {
       return res.status(409).json({ ok: false, message: 'A subadmin with that email already exists' })
     }
     const { salt, hash } = createPasswordRecord(password)
-    users.push({
+    const users = await addUser({
       email: mail,
       salt,
       hash,
       createdAt: new Date().toISOString(),
       createdBy: req.session.email,
     })
-    await writeUsers(users)
     res.status(201).json({ ok: true, users: users.map(publicUser) })
   } catch (error) {
     console.error(error)
@@ -191,12 +173,9 @@ app.put('/api/admin/users/:email', requireAuth(['superadmin']), async (req, res)
     return res.status(400).json({ ok: false, message: 'Password must be at least 6 characters' })
   }
   try {
-    const users = await readUsers()
-    const idx = users.findIndex((u) => u.email.toLowerCase() === targetEmail)
-    if (idx === -1) return res.status(404).json({ ok: false, message: 'Subadmin not found' })
     const { salt, hash } = createPasswordRecord(password)
-    users[idx] = { ...users[idx], salt, hash }
-    await writeUsers(users)
+    const result = await updateUserPassword(targetEmail, salt, hash)
+    if (!result) return res.status(404).json({ ok: false, message: 'Subadmin not found' })
     res.json({ ok: true, message: 'Password updated' })
   } catch (error) {
     console.error(error)
@@ -207,12 +186,10 @@ app.put('/api/admin/users/:email', requireAuth(['superadmin']), async (req, res)
 app.delete('/api/admin/users/:email', requireAuth(['superadmin']), async (req, res) => {
   const targetEmail = decodeURIComponent(req.params.email).toLowerCase()
   try {
-    const users = await readUsers()
-    const next = users.filter((u) => u.email.toLowerCase() !== targetEmail)
-    if (next.length === users.length) {
+    const result = await deleteUser(targetEmail)
+    if (!result) {
       return res.status(404).json({ ok: false, message: 'Subadmin not found' })
     }
-    await writeUsers(next)
 
     // Invalidate any active sessions for the deleted subadmin
     for (const [token, session] of sessions.entries()) {
@@ -221,7 +198,7 @@ app.delete('/api/admin/users/:email', requireAuth(['superadmin']), async (req, r
       }
     }
 
-    res.json({ ok: true, users: next.map(publicUser) })
+    res.json({ ok: true, users: result.map(publicUser) })
   } catch (error) {
     console.error(error)
     res.status(500).json({ ok: false, message: 'Unable to delete subadmin' })
@@ -277,16 +254,13 @@ app.post('/api/winners', requireAuth(), async (req, res) => {
   }
 
   try {
-    const winners = await readWinners()
-    const newWinner = {
+    const winners = await addWinner({
       name,
       phone,
       ticketNumber,
       position: position || '5Th',
       date: new Date().toISOString(),
-    }
-    winners.push(newWinner)
-    await writeWinners(winners)
+    })
     res.status(201).json({ ok: true, winners })
   } catch (error) {
     console.error(error)
@@ -303,12 +277,12 @@ app.put('/api/winners/:index', requireAuth(), async (req, res) => {
   }
 
   try {
-    const winners = await readWinners()
-    if (index < 0 || index >= winners.length) {
+    const existingWinners = await readWinners()
+    if (index < 0 || index >= existingWinners.length) {
       return res.status(404).json({ ok: false, message: 'Winner not found' })
     }
 
-    const existing = winners[index]
+    const existing = existingWinners[index]
     const updatedWinner = {
       ...existing,
       name: typeof name === 'string' && name.trim() ? name.trim() : existing.name,
@@ -318,8 +292,7 @@ app.put('/api/winners/:index', requireAuth(), async (req, res) => {
       date: new Date().toISOString(),
     }
 
-    winners[index] = updatedWinner
-    await writeWinners(winners)
+    const winners = await updateWinner(index, updatedWinner)
     res.json({ ok: true, winners })
   } catch (error) {
     console.error(error)
@@ -334,12 +307,11 @@ app.delete('/api/winners/:index', requireAuth(), async (req, res) => {
   }
 
   try {
-    const winners = await readWinners()
-    if (index < 0 || index >= winners.length) {
+    const existingWinners = await readWinners()
+    if (index < 0 || index >= existingWinners.length) {
       return res.status(404).json({ ok: false, message: 'Winner not found' })
     }
-    winners.splice(index, 1)
-    await writeWinners(winners)
+    const winners = await deleteWinner(index)
     res.json({ ok: true, winners })
   } catch (error) {
     console.error(error)
