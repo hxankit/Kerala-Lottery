@@ -8,7 +8,7 @@ const navItems = [
   // { href: '/winners', label: 'Winners', key: 'winners' },
   { href: '/help', label: 'Help Center', key: 'help' },
   { href: '/contact', label: 'Contact Us', key: 'contact' },
-  { href: '/admin', label: '', key: 'admin' },
+  { href: '/admin', label: 'Admin Portal', key: 'admin' },
 ]
 
 const tickerMessages = [
